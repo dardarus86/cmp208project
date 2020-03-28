@@ -46,6 +46,7 @@ void SceneApp::Init()
 	b2Vec2 gravity(0.0f, -9.81f);
 	world_ = new b2World(gravity);
 	score = 0;
+	counter = 0;
 	InitFont();
 	InitPlayer();
 	InitGround();
@@ -615,6 +616,7 @@ bool SceneApp::Update(float frame_time)
 		counter = 50;
 		player_body_->ApplyLinearImpulse(b2Vec2(0.0f, 5.0f), b2Vec2(player_body_->GetPosition().x, player_body_->GetPosition().y), true);
 	}
+
 
 	if (score < 0)
 	{
