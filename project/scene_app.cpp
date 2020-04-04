@@ -28,46 +28,71 @@ SceneApp::SceneApp(gef::Platform& platform) :
 	, ninja(NULL)
 	, road(NULL)
 	, walk_anim_(NULL)
+	
 {
 }
 
 void SceneApp::Init()
 {
+	game_state_ = INIT;
+	difficulty_state_ = DIFF_MEDIUM;
+	volume_state_ = VOL_MEDIUM;
+	current_start_menu_choice_ = START;
+	current_option_menu_choice_ = VOLUME;
+	textcolors[0] = 0xffcc0000;
+	textcolors[1] = 0xffffffff;
+	difficultytext = new std::string[3]{ "EASY","MEDIUM","HARD" };
+	gamemusictext = new std::string[3]{ "BREEZY", "RUN BOY", "MIAMI" };
+	volumelevel = new int[NUMBER_OF_VOLUME] { 0, 25, 50, 75, 100 };
+	gameobstacledistance = new int[NUMBER_OF_DIFFICULTY] { 30, 20, 15 };
+
+	//This was my original code for working out how many obstancles were present depending on the difficulty.
+	//gameobstacledifficulty = new int[NUMBER_OF_DIFFICULTY] { 500/35, 500/25, 500/20 };
+	   
+	GameInit();
+	EndInit();
+	InitFont();
+}
+
+void SceneApp::GameInit()
+{
+
 	sprite_renderer_ = gef::SpriteRenderer::Create(platform_);
 	renderer_3d_ = gef::Renderer3D::Create(platform_);
 	primitive_builder_ = new PrimitiveBuilder(platform_);
 	input_manager_ = gef::InputManager::Create(platform_);
 	audio_manager_ = gef::AudioManager::Create();
-
-	audio_manager_->LoadMusic("audio/Breezy.wav",platform_);
+	audio_manager_->LoadMusic("audio/music/start.wav", platform_);
+	audio_manager_->LoadSample("audio/soundeffects/menu/select1.wav", platform_);
+	audio_manager_->LoadSample("audio/soundeffects/menu/select2.wav", platform_);
+	audio_sample_id = -1;
 	audio_manager_->PlayMusic();
-	audio_manager_->SetMasterVolume(10);
+	audio_manager_->SetMasterVolume(volumelevel[volume_state_]);
 	srand(time(NULL));
 	b2Vec2 gravity(0.0f, -9.81f);
 	world_ = new b2World(gravity);
 	score = 0;
 	counter = 0;
-	InitFont();
+
 	InitPlayer();
 	InitGround();
 	InitRoad();
 	InitBuildings();
-	InitObstacles();
+
 	SetupLights();
 	SetupCamera();
-	
+
 	issliding_ = false;
-	
-	/*road_.mesh()->aabb().max_vtx
-	float currentX = -5.0f;
-	Road currentRoad = select road section;
-	while(currentX < 200.0f)
-	{
-		select next road section randomly
-		currentX += road_.mesh()->aabb().max_vtx().x();
-		add road section at this X
-		currentX += -next_road.mesh()->aabb().min_vtx().x();
-	}*/
+
+	volume_state_ = VOL_MEDIUM;
+	difficulty_state_ = DIFF_MEDIUM;
+
+
+
+}
+void SceneApp::EndInit()
+{
+	bool endmusicplaying_ = false;
 }
 void SceneApp::InitPlayer()
 {
@@ -94,9 +119,11 @@ void SceneApp::InitPlayer()
 	playerskinned->set_transform(player_scaleM44);
 
 	walk_anim_ = LoadAnimation("player/ninjarun.scn", "");
-	slide_anim_ = LoadAnimation("player/ninjafly.scn","");
+	slide_anim_ = LoadAnimation("player/ninjafly.scn", "");
 	up_anim_ = LoadAnimation("player/ninjaup.scn", "");
 	down_anim_ = LoadAnimation("player/ninjadown.scn", "");
+	dance_anim_ = LoadAnimation("player/ninjadance.scn", "");
+
 
 	if (walk_anim_)
 	{
@@ -106,30 +133,30 @@ void SceneApp::InitPlayer()
 	}
 
 	// create a physics body for the player
-	b2BodyDef player_body_def;
+
 	player_body_def.type = b2_dynamicBody;
 	player_body_def.position = b2Vec2(0.0f, 0.0f);
 	player_body_ = world_->CreateBody(&player_body_def);
 
 	// create the shape for the player
-	
+
 	player_shape.SetAsBox(0.37f, 0.40f);
 
 	// create the fixture
-	
+
 	player_fixture_def.shape = &player_shape;
 	player_fixture_def.density = 0.8f;
 	player_fixture_def.friction = 0.2f;
 
 	// create the fixture on the rigid body
 	player_body_->CreateFixture(&player_fixture_def);
-	
 
-	
 
-	
 
-	
+
+
+
+
 
 	// update visuals from simulation data
 	//player_.UpdateFromSimulation(player_body_);
@@ -182,8 +209,8 @@ void SceneApp::InitRoad()
 	apoc_Road_Distance_Counter = 800;
 
 	//random number for picking road elements at random out of 5 choices
-	
-	
+
+
 
 	const char* samurairoad_asset1 = "samurai/road/road1.scn";
 	const char* samurairoad_asset2 = "samurai/road/road2.scn";
@@ -227,8 +254,8 @@ void SceneApp::InitRoad()
 		samurai_Road_Mesh_Instance_M44[i].SetIdentity();
 		apoc_Road_MeshInstance_M44[i].SetIdentity();
 
-		samurai_Road_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(samurai_Roads[road_Random_Number]));
 		militaryRoad_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(military_Roads[road_Random_Number]));
+		samurai_Road_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(samurai_Roads[road_Random_Number]));
 		apoc_Road_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(apoc_Roads[road_Random_Number]));
 
 		military_Road_Mesh_Instance_V4[i] = gef::Vector4(military_Road_Distance_Counter, 0, 0, 0);
@@ -242,7 +269,7 @@ void SceneApp::InitRoad()
 		militaryRoad_Mesh_Instance[i].set_transform(military_Road_Mesh_Instance_M44[i]);
 		samurai_Road_Mesh_Instance[i].set_transform(samurai_Road_Mesh_Instance_M44[i]);
 		apoc_Road_Mesh_Instance[i].set_transform(apoc_Road_MeshInstance_M44[i]);
-		
+
 		military_Road_Distance_Counter = military_Road_Distance_Counter + 20;
 		samurai_Road_Distance_Counter = samurai_Road_Distance_Counter + 20;
 		apoc_Road_Distance_Counter = apoc_Road_Distance_Counter + 20;
@@ -299,7 +326,7 @@ void SceneApp::InitRoad()
 
 
 	//apoc
-	
+
 	apocroadmeshinstance[0].set_mesh(GetMeshFromSceneAssets(apocroads[0]));
 	apocroadmeshinstance[1].set_mesh(GetMeshFromSceneAssets(apocroads[1]));
 	apocroadmeshinstance[2].set_mesh(GetMeshFromSceneAssets(apocroads[2]));
@@ -368,32 +395,32 @@ void SceneApp::InitBuildings()
 
 	for (int i = 0; i < 12; i++)
 	{
-	int building_Random_Number = rand() % 4;
-	int building_Random_Disantce_Number = rand() % 10 +30;
+		int building_Random_Number = rand() % 4;
+		int building_Random_Disantce_Number = rand() % 10 + 30;
 
-	military_Building_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(military_Buildings[building_Random_Number]));
-	samurai_Building_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(samurai_Buildings[building_Random_Number]));
-	apoc_Building_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(apoc_Buildings[building_Random_Number]));
+		military_Building_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(military_Buildings[building_Random_Number]));
+		samurai_Building_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(samurai_Buildings[building_Random_Number]));
+		apoc_Building_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(apoc_Buildings[building_Random_Number]));
 
-	military_Buildings_Mesh_Instance_M44[i].SetIdentity();
-	samurai_Buildings_Mesh_Instance_M44[i].SetIdentity();
-	apoc_Buildings_Mesh_Instance_M44[i].SetIdentity();
+		military_Buildings_Mesh_Instance_M44[i].SetIdentity();
+		samurai_Buildings_Mesh_Instance_M44[i].SetIdentity();
+		apoc_Buildings_Mesh_Instance_M44[i].SetIdentity();
 
-	military_Buildings_Mesh_Instance_V4[i] = gef::Vector4(military_Building_Distance_Counter -10, 0, 0, 0);
-	samurai_Buildings_Mesh_Instance_V4[i] = gef::Vector4(samurai_Building_Distance_Counter, 0, 0, 0);
-	apoc_Buildings_Mesh_Instance_V4[i] = gef::Vector4(apoc_Building_Distance_Counter, 0, 0, 0);
+		military_Buildings_Mesh_Instance_V4[i] = gef::Vector4(military_Building_Distance_Counter - 10, 0, 0, 0);
+		samurai_Buildings_Mesh_Instance_V4[i] = gef::Vector4(samurai_Building_Distance_Counter, 0, 0, 0);
+		apoc_Buildings_Mesh_Instance_V4[i] = gef::Vector4(apoc_Building_Distance_Counter, 0, 0, 0);
 
-	military_Buildings_Mesh_Instance_M44[i].SetTranslation(military_Buildings_Mesh_Instance_V4[i]);
-	samurai_Buildings_Mesh_Instance_M44[i].SetTranslation(samurai_Buildings_Mesh_Instance_V4[i]);
-	apoc_Buildings_Mesh_Instance_M44[i].SetTranslation(apoc_Buildings_Mesh_Instance_V4[i]);
+		military_Buildings_Mesh_Instance_M44[i].SetTranslation(military_Buildings_Mesh_Instance_V4[i]);
+		samurai_Buildings_Mesh_Instance_M44[i].SetTranslation(samurai_Buildings_Mesh_Instance_V4[i]);
+		apoc_Buildings_Mesh_Instance_M44[i].SetTranslation(apoc_Buildings_Mesh_Instance_V4[i]);
 
-	military_Building_Mesh_Instance[i].set_transform(military_Buildings_Mesh_Instance_M44[i]);
-	samurai_Building_Mesh_Instance[i].set_transform(samurai_Buildings_Mesh_Instance_M44[i]);
-	apoc_Building_Mesh_Instance[i].set_transform(apoc_Buildings_Mesh_Instance_M44[i]);
+		military_Building_Mesh_Instance[i].set_transform(military_Buildings_Mesh_Instance_M44[i]);
+		samurai_Building_Mesh_Instance[i].set_transform(samurai_Buildings_Mesh_Instance_M44[i]);
+		apoc_Building_Mesh_Instance[i].set_transform(apoc_Buildings_Mesh_Instance_M44[i]);
 
-	military_Building_Distance_Counter = military_Building_Distance_Counter + building_Random_Disantce_Number;
-	samurai_Building_Distance_Counter = samurai_Building_Distance_Counter + building_Random_Disantce_Number;
-	apoc_Building_Distance_Counter = apoc_Building_Distance_Counter + building_Random_Disantce_Number;
+		military_Building_Distance_Counter = military_Building_Distance_Counter + building_Random_Disantce_Number;
+		samurai_Building_Distance_Counter = samurai_Building_Distance_Counter + building_Random_Disantce_Number;
+		apoc_Building_Distance_Counter = apoc_Building_Distance_Counter + building_Random_Disantce_Number;
 	}
 
 
@@ -475,38 +502,86 @@ void SceneApp::InitBuildings()
 }
 void SceneApp::InitObstacles()
 {
-	military_Obstacle_Distance_Counter = 30;
-	samurai_Obstacle_Distance_Counter = 430;
-	apoc_Obstacle_Distance_Counter = 830;
-	const char* samuraiobstacle_asset1 = "samurai/obstacles/small.scn";
-	const char* samuraiobstacle_asset2 = "samurai/obstacles/large.scn";
-	const char* samuraiobstacle_asset3 = "samurai/obstacles/gong.scn";
-	const char* samuraiobstacle_asset4 = "samurai/obstacles/lion.scn";
-	const char* miliobstacle_asset1 = "military/obstacles/boxes.scn";
-	const char* miliobstacle_asset2 = "military/obstacles/apc.scn";
-	const char* miliobstacle_asset3 = "military/obstacles/medical.scn";
-	const char* miliobstacle_asset4 = "military/obstacles/rockets.scn";
-	const char* apocobstacle_asset1 = "apoc/obstacles/car.scn";
-	const char* apocobstacle_asset2 = "apoc/obstacles/truck.scn";
-	const char* apocobstacle_asset3 = "apoc/obstacles/bodies.scn";
-	const char* apocobstacle_asset4 = "apoc/obstacles/billboard.scn";
-	military_Obstacle[0] = LoadSceneAssets(platform_, miliobstacle_asset1);
-	military_Obstacle[1] = LoadSceneAssets(platform_, miliobstacle_asset2);
-	military_Obstacle[2] = LoadSceneAssets(platform_, miliobstacle_asset3);
-	military_Obstacle[3] = LoadSceneAssets(platform_, miliobstacle_asset4);
-	samurai_Obstacle[0] = LoadSceneAssets(platform_, samuraiobstacle_asset1);
-	samurai_Obstacle[1] = LoadSceneAssets(platform_, samuraiobstacle_asset2);
-	samurai_Obstacle[2] = LoadSceneAssets(platform_, samuraiobstacle_asset3);
-	samurai_Obstacle[3] = LoadSceneAssets(platform_, samuraiobstacle_asset4);
-	apoc_Obstacle[0] = LoadSceneAssets(platform_, apocobstacle_asset1);
-	apoc_Obstacle[1] = LoadSceneAssets(platform_, apocobstacle_asset2);
-	apoc_Obstacle[2] = LoadSceneAssets(platform_, apocobstacle_asset3);
-	apoc_Obstacle[3] = LoadSceneAssets(platform_, apocobstacle_asset4);
+	const char* startscreen_asset = "test/startsscreenmodel.scn";
+	startscreen = LoadSceneAssets(platform_, startscreen_asset);
+	startscreen_Mesh_Instance.set_mesh(GetMeshFromSceneAssets(startscreen));
+	startscreen_Mesh_Instance_M44.SetIdentity();
+	startscreen_Mesh_Instance_V4 = gef::Vector4(0, 0, 0, 0);
+	startscreen_Mesh_Instance_M44.SetTranslation(startscreen_Mesh_Instance_V4);
+	startscreen_Mesh_Instance.set_transform(startscreen_Mesh_Instance_M44);
 
-	for (int i = 0; i < 20; i++)
+	military_Obstacle_Distance_Counter = 30;
+	samurai_Obstacle_Distance_Counter = 400;
+	apoc_Obstacle_Distance_Counter = 800;
+
+	const char* samurai_obstacle_asset[4] = {
+	"samurai/obstacles/small.scn",
+	"samurai/obstacles/large.scn",
+	"samurai/obstacles/gong.scn",
+	"samurai/obstacles/lion.scn"
+	};
+
+	const char* military_obstacle_asset[4] = {
+	"military/obstacles/boxes.scn",
+	"military/obstacles/apc.scn",
+	"military/obstacles/medical.scn",
+	"military/obstacles/rockets.scn"
+	};
+
+	const char* apoc_obstacle_asset[4] =
+	{
+	"apoc/obstacles/car.scn",
+	"apoc/obstacles/truck.scn",
+	"apoc/obstacles/bodies.scn",
+	"apoc/obstacles/billboard.scn"
+	};
+
+	for (int i = 0; i < 4; i++)
+	{
+
+		military_Obstacle[i] = LoadSceneAssets(platform_, military_obstacle_asset[i]);
+		samurai_Obstacle[i] = LoadSceneAssets(platform_, samurai_obstacle_asset[i]);
+		apoc_Obstacle[i] = LoadSceneAssets(platform_, apoc_obstacle_asset[i]);
+	}
+	
+	for (int i = 0, total_distance = 0; ; i++)
 	{
 		int obstacle_Random_Number = rand() % 4;
-		int obstacle_Random_Distance = rand() % 10 + 15;
+		int obstacle_Random_Distance = rand() % 10 + gameobstacledistance[difficulty_state_];
+		total_distance += obstacle_Random_Distance;
+		if (total_distance > 380)
+			break;
+		int obstacle_Up_Or_Down = rand() % 100;
+		if (obstacle_Up_Or_Down > 50)
+		{
+			obstacle_Height = 2;
+		}
+		else
+		{
+			obstacle_Height = 0;
+		}
+		apoc_Obstacle_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(apoc_Obstacle[obstacle_Random_Number]));
+		apoc_Obstacle_Mesh_Instance_M44[i].SetIdentity();
+		apocobstaclemeshinstanceV4[i] = gef::Vector4(apoc_Obstacle_Distance_Counter, obstacle_Height, 0, 0);
+		apoc_Obstacle_Mesh_Instance_M44[i].SetTranslation(apocobstaclemeshinstanceV4[i]);
+		apoc_Obstacle_Mesh_Instance[i].set_transform(apoc_Obstacle_Mesh_Instance_M44[i]);
+		apoc_Obstacle_Position_V2vec2[i] = b2Vec2(apoc_Obstacle_Distance_Counter, obstacle_Height + 1);
+		apoc_Body_Def[i].type = b2_staticBody;
+		apoc_Body_Def[i].position = apoc_Obstacle_Position_V2vec2[i];
+		apoc_Obstacle_B2B[i] = world_->CreateBody(&apoc_Body_Def[i]);
+		apoc_Shape.SetAsBox(1.0, 2.7);
+		apoc_Obstacle_Fixture_Def[i].shape = &apoc_Shape;
+		apoc_Obstacle_B2B[i]->CreateFixture(&apoc_Obstacle_Fixture_Def[i]);
+		apoc_Obstacle_Distance_Counter = apoc_Obstacle_Distance_Counter + obstacle_Random_Distance;
+
+	}
+	for (int i = 0, total_distance = 0; ; i++)
+	{
+		int obstacle_Random_Number = rand() % 4;
+		int obstacle_Random_Distance = rand() % 10 + gameobstacledistance[difficulty_state_];
+		total_distance += obstacle_Random_Distance;
+		if (total_distance > 380)
+			break;
 		int obstacle_Up_Or_Down = rand() % 100;
 		if (obstacle_Up_Or_Down > 50)
 		{
@@ -517,65 +592,59 @@ void SceneApp::InitObstacles()
 			obstacle_Height = 0;
 		}
 		military_Obstacle_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(military_Obstacle[obstacle_Random_Number]));
-		samurai_Obstacle_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(samurai_Obstacle[obstacle_Random_Number]));
-		apoc_Obstacle_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(apoc_Obstacle[obstacle_Random_Number]));
 		military_Obstacle_Mesh_Instance_M44[i].SetIdentity();
-		samurai_Obstacle_Mesh_Instance_M44[i].SetIdentity();
-		apoc_Obstacle_Mesh_Instance_M44[i].SetIdentity();
-		militaryobstaclemeshinstanceV4[i] = gef::Vector4(military_Obstacle_Distance_Counter, obstacle_Height, 0, 0);
-		samuraiobstaclemeshinstanceV4[i] = gef::Vector4(samurai_Obstacle_Distance_Counter, obstacle_Height, 0, 0);
-		apocobstaclemeshinstanceV4[i] = gef::Vector4(apoc_Obstacle_Distance_Counter, obstacle_Height, 0, 0);
-		military_Obstacle_Mesh_Instance_M44[i].SetTranslation(militaryobstaclemeshinstanceV4[i]);
-		samurai_Obstacle_Mesh_Instance_M44[i].SetTranslation(samuraiobstaclemeshinstanceV4[i]);
-		apoc_Obstacle_Mesh_Instance_M44[i].SetTranslation(apocobstaclemeshinstanceV4[i]);
-		military_Obstacle_Mesh_Instance[i].set_transform(military_Obstacle_Mesh_Instance_M44[i]);
-		samurai_Obstacle_Mesh_Instance[i].set_transform(samurai_Obstacle_Mesh_Instance_M44[i]);
-		apoc_Obstacle_Mesh_Instance[i].set_transform(apoc_Obstacle_Mesh_Instance_M44[i]);
 
-		military_Obstacle_Position_B2vec2[i] = b2Vec2(military_Obstacle_Distance_Counter, obstacle_Height+1);
-		samurai_Obstacle_Position_B2vec2[i] = b2Vec2(samurai_Obstacle_Distance_Counter, obstacle_Height+1);
-		apoc_Obstacle_Position_V2vec2[i] = b2Vec2(apoc_Obstacle_Distance_Counter, obstacle_Height+1);
+		militaryobstaclemeshinstanceV4[i] = gef::Vector4(military_Obstacle_Distance_Counter, obstacle_Height, 0, 0);
+
+		military_Obstacle_Mesh_Instance_M44[i].SetTranslation(militaryobstaclemeshinstanceV4[i]);
+
+		military_Obstacle_Mesh_Instance[i].set_transform(military_Obstacle_Mesh_Instance_M44[i]);
+
+		military_Obstacle_Position_B2vec2[i] = b2Vec2(military_Obstacle_Distance_Counter, obstacle_Height + 1);
 		military_Body_Def[i].type = b2_staticBody;
-		samurai_Body_Def[i].type = b2_staticBody;
-		apoc_Body_Def[i].type = b2_staticBody;
-		
+
 		military_Body_Def[i].position = military_Obstacle_Position_B2vec2[i];
-		samurai_Body_Def[i].position = samurai_Obstacle_Position_B2vec2[i];
-		apoc_Body_Def[i].position = apoc_Obstacle_Position_V2vec2[i];
 		military_Obstacle_B2B[i] = world_->CreateBody(&military_Body_Def[i]);
-		samurai_Obstacle_B2B[i] = world_->CreateBody(&samurai_Body_Def[i]);
-		apoc_Obstacle_B2B[i] = world_->CreateBody(&apoc_Body_Def[i]);
-		military_Shape[i].SetAsBox(1.0,2.7);
-		samurai_Shape[i].SetAsBox(1.0, 2.7);
-		apoc_Shape[i].SetAsBox(1.0, 2.69);
-		military_Obstacle_Fixture_Def[i].shape = &military_Shape[i];
-		samurai_Obstacle_Fixture_Def[i].shape = &military_Shape[i];
-		apoc_Obstacle_Fixture_Def[i].shape = &apoc_Shape[i];
+		military_Shape.SetAsBox(1.0, 2.7);
+		military_Obstacle_Fixture_Def[i].shape = &military_Shape;
 		military_Obstacle_B2B[i]->CreateFixture(&military_Obstacle_Fixture_Def[i]);
-		samurai_Obstacle_B2B[i]->CreateFixture(&samurai_Obstacle_Fixture_Def[i]);
-		apoc_Obstacle_B2B[i]->CreateFixture(&apoc_Obstacle_Fixture_Def[i]);
 
 
 		military_Obstacle_Distance_Counter = military_Obstacle_Distance_Counter + obstacle_Random_Distance;
-		samurai_Obstacle_Distance_Counter = samurai_Obstacle_Distance_Counter + obstacle_Random_Distance;
-		apoc_Obstacle_Distance_Counter = apoc_Obstacle_Distance_Counter + obstacle_Random_Distance;
 
 
 	}
-	//militaryobstaclemeshinstance[0].set_mesh(GetMeshFromSceneAssets(militaryobstacle[0]));
-	//militaryobstaclemeshinstance[1].set_mesh(GetMeshFromSceneAssets(militaryobstacle[1]));
-	//samuraiobstaclemeshinstance[0].set_mesh(GetMeshFromSceneAssets(samuraiobstacle[0]));
-	//samuraiobstaclemeshinstance[1].set_mesh(GetMeshFromSceneAssets(samuraiobstacle[1]));
-	//apocoobstaclemeshinstance[0].set_mesh(GetMeshFromSceneAssets(apocobstacle[0]));
-	//apocoobstaclemeshinstance[1].set_mesh(GetMeshFromSceneAssets(apocobstacle[1]));
-	//militaryobstaclemeshinstanceM44[0].SetIdentity();
-	//militaryobstaclemeshinstanceM44[1].SetIdentity();
-	//samuraiobstaclemeshinstanceM44[0].SetIdentity();
-	//samuraiobstaclemeshinstanceM44[1].SetIdentity();
-	//apocobstaclemeshinstanceM44[0].SetIdentity();
-	//apocobstaclemeshinstanceM44[1].SetIdentity();
+	for (int i = 0, total_distance = 0; ; i++)
+	{
+		int obstacle_Random_Number = rand() % 4;
+		int obstacle_Random_Distance = rand() % 10 + gameobstacledistance[difficulty_state_];
+		total_distance += obstacle_Random_Distance;
+		if (total_distance > 380)
+			break;
+		int obstacle_Up_Or_Down = rand() % 100;
+		if (obstacle_Up_Or_Down > 50)
+		{
+			obstacle_Height = 2;
+		}
+		else
+		{
+			obstacle_Height = 0;
+		}
+		samurai_Obstacle_Mesh_Instance[i].set_mesh(GetMeshFromSceneAssets(samurai_Obstacle[obstacle_Random_Number]));
+		samurai_Obstacle_Mesh_Instance_M44[i].SetIdentity();
+		samuraiobstaclemeshinstanceV4[i] = gef::Vector4(samurai_Obstacle_Distance_Counter, obstacle_Height, 0, 0);
+		samurai_Obstacle_Mesh_Instance_M44[i].SetTranslation(samuraiobstaclemeshinstanceV4[i]);
+		samurai_Obstacle_Mesh_Instance[i].set_transform(samurai_Obstacle_Mesh_Instance_M44[i]);
+		samurai_Obstacle_Position_B2vec2[i] = b2Vec2(samurai_Obstacle_Distance_Counter, obstacle_Height + 1);
+		samurai_Body_Def[i].type = b2_staticBody;
+		samurai_Body_Def[i].position = samurai_Obstacle_Position_B2vec2[i];
+		samurai_Obstacle_B2B[i] = world_->CreateBody(&samurai_Body_Def[i]);
+		samurai_Shape.SetAsBox(1.0, 2.7);
+		samurai_Obstacle_Fixture_Def[i].shape = &military_Shape;
+		samurai_Obstacle_B2B[i]->CreateFixture(&samurai_Obstacle_Fixture_Def[i]);
+		samurai_Obstacle_Distance_Counter = samurai_Obstacle_Distance_Counter + obstacle_Random_Distance;
 
-
+	}
 }
 void SceneApp::InitFont()
 {
@@ -583,20 +652,283 @@ void SceneApp::InitFont()
 	font_->Load("comic_sans");
 }
 
-
 bool SceneApp::Update(float frame_time)
+{
+	fps_ = 1.0f / frame_time;
+
+
+	input_manager_->Update();
+
+	switch (game_state_)
+	{
+	case INIT:
+		FrontendUpdate(frame_time);
+		break;
+	case OPTIONS:
+		OptionsUpdate(frame_time);
+		break;
+	case GAME:
+		GameUpdate(frame_time);
+		break;
+	case END:
+		EndUpdate(frame_time);
+		break;
+	}
+
+	return true;
+}
+void SceneApp::Render()
+{
+	switch (game_state_)
+	{
+	case INIT:
+		FrontendRender();
+		break;
+	case OPTIONS:
+		OptionsRender();
+		break;
+	case GAME:
+		GameRender();
+		break;
+	case END:
+		EndRender();
+		break;
+
+	}
+}
+
+void SceneApp::FrontendInit()
+{
+
+	const char* start_model_asset = "start/startmodel.scn";
+	start_model = LoadSceneAssets(platform_, start_model_asset);
+	startmodelM44.SetIdentity();
+	startmodel.set_mesh(GetMeshFromSceneAssets(start_model));
+	startmodelV4 = gef::Vector4(0, 0, 0, 0);
+	startmodelM44.SetTranslation(startmodelV4);
+	startmodel.set_transform(startmodelM44);
+
+
+}
+
+void SceneApp::FrontendUpdate(float frame_time)
+{
+
+
+
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_DOWN))
+	{
+		audio_manager_->PlaySample(0);
+		current_start_menu_choice_ = SceneApp::STARTMENUCHOICE((current_start_menu_choice_ + 1) % START_MENU_CHOICES);
+	}
+
+
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_UP))
+	{
+		audio_manager_->PlaySample(0);
+		current_start_menu_choice_ = SceneApp::STARTMENUCHOICE((current_start_menu_choice_ -1 + START_MENU_CHOICES) % START_MENU_CHOICES);
+	}
+
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_RETURN))
+	{
+		switch (current_start_menu_choice_)
+		{
+		case START:
+			InitObstacles();
+			switch (game_music_state)
+			{
+			case BREEZY:
+				audio_manager_->LoadMusic("audio/music/breezy.wav", platform_);
+				break;
+			case RUNBOY:
+				audio_manager_->LoadMusic("audio/music/runboy.wav", platform_);
+				break;
+			case MIAMI:
+				audio_manager_->LoadMusic("audio/music/miami.wav", platform_);
+				break;
+
+			}
+			
+			audio_manager_->PlayMusic();
+			game_state_ = GAME;
+			break;
+		case OPTION:
+			game_state_ = OPTIONS;
+			break;
+		case QUIT:
+			//to quit app
+			break;
+		}
+	}
+
+
+}
+void SceneApp::FrontendRender()
+{
+
+	sprite_renderer_->Begin();
+
+	font_->RenderText(
+		sprite_renderer_,
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.5f - 56.0f, -0.99f),
+		1.0f,
+		textcolors[current_start_menu_choice_ == START],
+		gef::TJ_CENTRE,
+		"Start");
+
+	font_->RenderText(
+		sprite_renderer_,
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.6f - 56.0f, -0.99f),
+		1.0f,
+		textcolors[current_start_menu_choice_ == OPTIONS],
+		gef::TJ_CENTRE,
+		"Options");
+
+	font_->RenderText(
+		sprite_renderer_,
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.7f - 56.0f, -0.99f),
+		1.0f,
+		textcolors[current_start_menu_choice_ == QUIT],
+		gef::TJ_CENTRE,
+		"Quit");
+
+	sprite_renderer_->End();
+}
+
+void SceneApp::OptionsUpdate(float frame_time)
+{
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_DOWN))
+	{
+		audio_manager_->PlaySample(0);
+		current_option_menu_choice_ = SceneApp::OPTIONMENUCHOICE((current_option_menu_choice_ + 1) % OPTION_MENU_CHOICES);
+	}
+
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_UP))
+	{
+		audio_manager_->PlaySample(0);
+		current_option_menu_choice_ = SceneApp::OPTIONMENUCHOICE((current_option_menu_choice_ - 1 + OPTION_MENU_CHOICES) % OPTION_MENU_CHOICES);
+	}
+
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_RIGHT))
+	{
+		if (current_option_menu_choice_ == VOLUME)
+		{
+			volume_state_ = SceneApp::VOLUMELEVEL((volume_state_ + 1) % NUMBER_OF_VOLUME);
+			audio_manager_->SetMasterVolume(volumelevel[volume_state_]);
+		}
+		else if (current_option_menu_choice_ == DIFFICULTY)
+		{
+			difficulty_state_ = SceneApp::GAMEDIFFICULTY((difficulty_state_ + 1) % NUMBER_OF_DIFFICULTY);
+		}
+		else if (current_option_menu_choice_ == MUSIC)
+		{
+			game_music_state = SceneApp::GAMEMUSICCHOICE((game_music_state + 1) % NUMBER_OF_SONGS);
+		}
+
+	}
+
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_LEFT))
+	{
+		if (current_option_menu_choice_ == VOLUME)
+		{
+			volume_state_ = SceneApp::VOLUMELEVEL((volume_state_  - 1 + NUMBER_OF_VOLUME) % NUMBER_OF_VOLUME);
+			audio_manager_->SetMasterVolume(volumelevel[volume_state_]);
+		}
+		else if (current_option_menu_choice_ == DIFFICULTY)
+		{
+			difficulty_state_ = SceneApp::GAMEDIFFICULTY((difficulty_state_ - 1 + NUMBER_OF_DIFFICULTY) % NUMBER_OF_DIFFICULTY);
+		}
+		else if (current_option_menu_choice_ == MUSIC)
+		{
+			game_music_state = SceneApp::GAMEMUSICCHOICE((game_music_state - 1 + NUMBER_OF_SONGS) % NUMBER_OF_SONGS);
+		}
+	}
+
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_RETURN))
+	{
+		switch (current_option_menu_choice_)
+		{
+		case BACK:
+			
+			game_state_ = INIT;
+			break;
+		}
+
+	}
+}
+void SceneApp::OptionsRender()
+{
+
+	sprite_renderer_->Begin();
+
+
+
+	font_->RenderText(
+		sprite_renderer_,
+		gef::Vector4(platform_.width() * 0.265f, platform_.height() * 0.4f - 56.0f, -0.99f),
+		1.5f,
+		textcolors[current_option_menu_choice_ == VOLUME],
+		gef::TJ_LEFT,
+		"       VOLUME:  %i", volumelevel[volume_state_]);
+
+
+	font_->RenderText(
+		sprite_renderer_,
+		gef::Vector4(platform_.width() * 0.265f, platform_.height() * 0.5f - 56.0f, -0.99f),
+		1.5f,
+		textcolors[current_option_menu_choice_ == DIFFICULTY],
+		gef::TJ_LEFT,
+		"DIFFICULTY: %s", difficultytext[difficulty_state_]);
+
+	font_->RenderText(
+		sprite_renderer_,
+		gef::Vector4(platform_.width() * 0.265f, platform_.height() * 0.6f - 56.0f, -0.99f),
+		1.5f,
+		textcolors[current_option_menu_choice_ == MUSIC],
+		gef::TJ_LEFT,
+		"           SONG: %s", gamemusictext[game_music_state]);
+
+	font_->RenderText(
+		sprite_renderer_,
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.7f - 56.0f, -0.99f),
+		1.5f,
+		textcolors[current_option_menu_choice_ == BACK],
+		gef::TJ_CENTRE,
+		"BACK");
+
+	sprite_renderer_->End();
+}
+void SceneApp::OptionsRelease()
+{
+}
+
+void SceneApp::GameUpdate(float frame_time)
 {
 	counter--;
 	score++;
 
+	if (player_body_->GetPosition().x > 1190)
+	{
+		audio_manager_->LoadMusic("audio/music/end.wav", platform_);
+		audio_manager_->PlayMusic();
+		game_state_ = END;
+	}
+
+	if (input_manager_->keyboard()->IsKeyDown(gef::Keyboard::KC_E))
+	{
+		audio_manager_->LoadMusic("audio/music/end.wav", platform_);
+		audio_manager_->PlayMusic();
+		game_state_ = END;
+	}
+
 	vel = b2Vec2(2.0f, 0.0f);
 	fps_ = 1.0f / frame_time;
 	input_manager_->Update();
-	const gef::SonyController* controller = input_manager_->controller_input()->GetController(0);
+	//const gef::SonyController* controller = input_manager_->controller_input()->GetController(0);
 
 	world_->Step(frame_time, 8, 3);
 	gef::Vector4 playerPosition2(player_body_->GetPosition().x, player_body_->GetPosition().y, 0.0f);
-	camera_eye_transformV4 = gef::Vector4{ player_body_->GetPosition().x, player_body_->GetPosition().y +5,16,0 };
+	camera_eye_transformV4 = gef::Vector4{ player_body_->GetPosition().x, player_body_->GetPosition().y + 5,16,0 };
 	camera_lookat_transformV4 = gef::Vector4{ player_body_->GetPosition().x, player_body_->GetPosition().y,0,0 };
 	camera_eye_V4 = camera_eye_transformV4;
 	camera_lookat_V4 = camera_lookat_transformV4;
@@ -610,59 +942,42 @@ bool SceneApp::Update(float frame_time)
 	combined.SetTranslation(playerPosition);
 
 	playerskinned->set_transform(combined);
-	
-	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_W) && counter <= 0)
-	{
-		counter = 50;
-		player_body_->ApplyLinearImpulse(b2Vec2(0.0f, 5.0f), b2Vec2(player_body_->GetPosition().x, player_body_->GetPosition().y), true);
-	}
 
 
-	if (score < 0)
-	{
-		score = 0;
-	}
 
+	//players speed
 	if (player_body_->GetLinearVelocity().x < 7)
 	{
 		player_body_->ApplyForce(b2Vec2(5.0f, 0.0f), b2Vec2(player_body_->GetPosition().x, player_body_->GetPosition().y), true);
 	}
-
+	//when player slows down, decriment score
 	if (player_body_->GetLinearVelocity().x < 4)
 	{
-		score-=10;
+		score -= 5;
 	}
-	
+
 	if (input_manager_->keyboard()->IsKeyDown(gef::Keyboard::KC_S))
 	{
-		
+
 		if (issliding_)
 		{
 			fixturelistplayer = player_body_->GetFixtureList();
 			b2Shape* shape = fixturelistplayer->GetShape();
 			b2PolygonShape* polygon = dynamic_cast<b2PolygonShape*>(shape);
-			polygon->SetAsBox(0.3f, 0.3f);
-
-			//player_shape.SetAsBox(0.3f, 0.3f);
-
-			//player_fixture_def.shape = &player_shape;
-			//player_fixture_def.density = 1.0f;
-			//player_fixture_def.friction = 1.0f;
-			//player_body_->DestroyFixture(player_body_->GetFixtureList());
-			//player_body_->CreateFixture(&player_fixture_def);
+			polygon->SetAsBox(0.3f, 0.1f);
 			anim_player_.set_clip(slide_anim_);
-			playerslideV4 = gef::Vector4(-1.0f, 0, 0, 0) + playerPosition;
+			playerslideV4 = gef::Vector4(-1.0f, 0.3f, 0, 0) + playerPosition;
 			player_transformslideM44.SetIdentity();
 			player_transformslideM44.SetTranslation(playerslideV4);
 			player_rotateslideM44.RotationZ(gef::DegToRad(-90.0f));
-			gef::Matrix44 combined2 = (  player_scaleM44 * player_rotateM44 * player_rotateslideM44 *player_transformslideM44);
+			gef::Matrix44 combined2 = (player_scaleM44 * player_rotateM44 * player_rotateslideM44 * player_transformslideM44);
 			playerskinned->set_transform(combined2);
 		}
 		issliding_ = true;
-		
+
 	}
 
-	if (input_manager_->keyboard()->IsKeyReleased(gef::Keyboard::KC_S))
+	else
 	{
 		player_shape.SetAsBox(0.37f, 0.40f);
 		player_fixture_def.shape = &player_shape;
@@ -675,13 +990,42 @@ bool SceneApp::Update(float frame_time)
 		playerslideV4 = gef::Vector4(0.5f, 0, 0, 0);
 		player_transformslideM44.SetIdentity();
 		player_transformslideM44.SetTranslation(playerslideV4);
-		player_rotateslideM44.RotationZ(gef::DegToRad(90.0f));
-		gef::Matrix44 combined3 = (player_scaleM44 * player_rotateM44 * player_rotateslideM44 *player_transformslideM44);
+		player_rotateslideM44.RotationZ(gef::DegToRad(0.0f));
+		gef::Matrix44 combined3 = (player_scaleM44 * player_rotateM44 * player_rotateslideM44 * player_transformslideM44);
 		combined3.SetTranslation(playerPosition);
 		playerskinned->set_transform(combined3);
 	}
-
-	
+	//if (input_manager_->keyboard()->IsKeyReleased(gef::Keyboard::KC_S))
+	//{
+	//	player_shape.SetAsBox(0.37f, 0.40f);
+	//	player_fixture_def.shape = &player_shape;
+	//	player_fixture_def.density = 0.8f;
+	//	player_fixture_def.friction = 0.2f;
+	//	player_body_->DestroyFixture(player_body_->GetFixtureList());
+	//	player_body_->CreateFixture(&player_fixture_def);
+	//	issliding_ = false;
+	//	anim_player_.set_clip(walk_anim_);
+	//	playerslideV4 = gef::Vector4(0.5f, 0, 0, 0);
+	//	player_transformslideM44.SetIdentity();
+	//	player_transformslideM44.SetTranslation(playerslideV4);
+	//	player_rotateslideM44.RotationZ(gef::DegToRad(90.0f));
+	//	gef::Matrix44 combined3 = (player_scaleM44 * player_rotateM44 * player_rotateslideM44 * player_transformslideM44);
+	//	combined3.SetTranslation(playerPosition);
+	//	playerskinned->set_transform(combined3);
+	//}
+	if (input_manager_->keyboard()->IsKeyDown(gef::Keyboard::KC_W) && counter <= 0)
+	{
+		counter = 50;
+		player_body_->ApplyLinearImpulse(b2Vec2(0.0f, 5.0f), b2Vec2(player_body_->GetPosition().x, player_body_->GetPosition().y), true);
+	}
+	if (counter < 0)
+	{
+		counter = 0;
+	}
+	if (score < 0)
+	{
+		score = 0;
+	}
 	if (player_body_->GetLinearVelocity().y > 0.05)
 	{
 		anim_player_.set_clip(up_anim_);
@@ -704,15 +1048,8 @@ bool SceneApp::Update(float frame_time)
 		}
 	}
 
-	/*if (player_body_->GetLinearVelocity().x < 0.01 && player_body_->GetLinearVelocity().x > -0.01)
-	{
-		player_body
-	}*/
-
-
-
 	gef::DebugOut("Player: %0.1f %0.1f %0.1f %0.01f\n", player_body_->GetPosition().x, player_body_->GetPosition().y, player_body_->GetLinearVelocity().x, player_body_->GetLinearVelocity().y);
-	
+
 	UpdateSimulation(frame_time);
 
 	if (playerskinned)
@@ -724,12 +1061,13 @@ bool SceneApp::Update(float frame_time)
 		// from the newly updated pose in the anim player
 		playerskinned->UpdateBoneMatrices(anim_player_.pose());
 	}
-	return true;
+
+
 }
-void SceneApp::Render()
+void SceneApp::GameRender()
 {
 	// setup camera
-	
+
 	// projection
 	gef::Matrix44 projection_matrix;
 	gef::Matrix44 view_matrix;
@@ -743,10 +1081,10 @@ void SceneApp::Render()
 	renderer_3d_->Begin();
 
 	// draw ground
-	
+
 
 	// draw player
-	
+
 	renderer_3d_->DrawSkinnedMesh(*playerskinned, playerskinned->bone_matrices());
 	for (int i = 0; i < 20; i++)
 	{
@@ -770,11 +1108,11 @@ void SceneApp::Render()
 	}
 
 	renderer_3d_->DrawMesh(background_Mesh_Instance);
-	
+
 	renderer_3d_->set_override_material(&primitive_builder_->green_material());
 	renderer_3d_->DrawMesh(ground_);
-	
-	
+
+
 	renderer_3d_->set_override_material(NULL);
 
 	renderer_3d_->End();
@@ -784,6 +1122,126 @@ void SceneApp::Render()
 	DrawHUD();
 	sprite_renderer_->End();
 }
+void SceneApp::GameRelease()
+{
+}
+
+
+
+void SceneApp::EndUpdate(float frame_time)
+{
+
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_RETURN))
+	{
+		switch (game_music_state)
+		{
+		case BREEZY:
+			audio_manager_->LoadMusic("audio/music/breezy.wav", platform_);
+			score = 0;
+			game_state_ = GAME;
+			break;
+		case RUNBOY:
+			audio_manager_->LoadMusic("audio/music/runboy.wav", platform_);
+			score = 0;
+			game_state_ = GAME;
+			break;
+		case MIAMI:
+			audio_manager_->LoadMusic("audio/music/miami.wav", platform_);
+			score = 0;
+			game_state_ = GAME;
+			break;
+
+		}
+		
+	}
+
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_ESCAPE))
+	{
+		audio_manager_->LoadMusic("audio/music/start.wav", platform_);
+		audio_manager_->PlayMusic();
+		game_state_ = INIT;
+	}
+
+
+	UpdateSimulation(frame_time);
+
+	if (playerskinned)
+	{
+		// update the pose in the anim player from the animation
+		anim_player_.Update(frame_time, playerskinned->bind_pose());
+
+		// update the bone matrices that are used for rendering the character
+		// from the newly updated pose in the anim player
+		playerskinned->UpdateBoneMatrices(anim_player_.pose());
+	}
+
+}
+void SceneApp::EndRender()
+{
+	gef::Vector4 playerPosition(0.0, 0.0, -200.0f);
+	endplayerpos.SetIdentity();
+	endplayerpos.SetTranslation(playerPosition);
+	playerskinned->set_transform(endplayerpos);
+
+	camera_eye_V4 = gef::Vector4(0.0f, 0.0f, 300.0f);
+	player_body_->SetTransform(b2Vec2(0.0, 0.0), 0);
+	camera_lookat_V4 = gef::Vector4(0, 0, 0.0f);
+	camera_up_V4 = gef::Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+
+	gef::Matrix44 projection_matrix;
+	gef::Matrix44 view_matrix;
+	projection_matrix = platform_.PerspectiveProjectionFov(camera_fov_, (float)platform_.width() / (float)platform_.height(), near_plane_, far_plane_);
+	view_matrix.LookAt(camera_eye_V4, camera_lookat_V4, camera_up_V4);
+	renderer_3d_->set_projection_matrix(projection_matrix);
+	renderer_3d_->set_view_matrix(view_matrix);
+
+	renderer_3d_->Begin();
+
+	anim_player_.set_clip(dance_anim_);
+	renderer_3d_->DrawSkinnedMesh(*playerskinned, playerskinned->bone_matrices());
+
+
+	renderer_3d_->End();
+
+	sprite_renderer_->Begin(false);
+	font_->RenderText(
+		sprite_renderer_,
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.6f - 56.0f, -0.99f),
+		2.0f,
+		0xff20a5da,
+		gef::TJ_CENTRE,
+		"Your final score: %i", score);
+
+	font_->RenderText(
+		sprite_renderer_,
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.70f - 56.0f, -0.99f),
+		1.0f,
+		0xff20a5da,
+		gef::TJ_CENTRE,
+		"Press ENTER to go to a new game", score);
+
+	font_->RenderText(
+		sprite_renderer_,
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.75f - 56.0f, -0.99f),
+		1.0f,
+		0xff20a5da,
+		gef::TJ_CENTRE,
+		"Press ESCAPE to go to the start menu", score);
+
+	sprite_renderer_->End();
+
+
+
+}
+void SceneApp::EndRelease()
+{
+}
+
+void SceneApp::InitOptions()
+{
+}
+
+
 
 void SceneApp::DrawHUD()
 {
@@ -810,7 +1268,7 @@ void SceneApp::SetupLights()
 	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
 	default_shader_data.AddPointLight(default_point_light);
 
-	
+
 }
 void SceneApp::SetupCamera()
 {
@@ -851,7 +1309,7 @@ void SceneApp::UpdateSimulation(float frame_time)
 	// get contact count
 	int contact_count = world_->GetContactCount();
 
-	for (int contact_num = 0; contact_num<contact_count; ++contact_num)
+	for (int contact_num = 0; contact_num < contact_count; ++contact_num)
 	{
 		if (contact->IsTouching())
 		{
@@ -902,6 +1360,9 @@ void SceneApp::CameraRotateAroundObject(float rotate)
 	//camera_eye_rotateV4.Transform(camera_eye_transformM44);
 	camera_eye_V4 = camera_lookat_V4 - offset;
 }
+
+
+
 gef::Skeleton* SceneApp::GetFirstSkeleton(gef::Scene* scene)
 {
 	gef::Skeleton* skeleton = NULL;
@@ -988,6 +1449,19 @@ void SceneApp::CleanUp()
 
 	delete ground_mesh_;
 	ground_mesh_ = NULL;
+
+
+
+
+	for (int i = 0; i < 5; i++)
+	{
+		delete samurai_Roads[i];
+		delete military_Roads[i];
+		delete apoc_Roads[i];
+		samurai_Roads[i] = NULL;
+		military_Roads[i] = NULL;
+		apoc_Roads[i] = NULL;
+	}
 
 	CleanUpFont();
 
