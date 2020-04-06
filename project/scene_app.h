@@ -13,10 +13,12 @@
 #include <graphics\skinned_mesh_instance.h>
 #include "motion_clip_player.h"
 #include <string.h>
-
+#include "Roads.h"
+#include "Buildings.h"
+#include "Obstacles.h"
 #define NUMBER_OF_DIFFICULTY 3
 #define START_MENU_CHOICES 3
-#define OPTION_MENU_CHOICES 4
+#define OPTION_MENU_CHOICES 5
 #define NUMBER_OF_SONGS 3
 #define NUMBER_OF_VOLUME 5
 #define NUMBER_OF_ROAD_MESH_INSTANCE 20
@@ -41,13 +43,14 @@ class SceneApp : public gef::Application
 {
 public:
 
-	enum STARTMENUCHOICE { START = 0, OPTION, QUIT };
-	enum GAMEMUSICCHOICE {BREEZY = 0, RUNBOY, MIAMI };
-	enum GOODSCOREEFFECT {BRAVO = 0, GOOD, PRETTYGOOD, GREAT, MARVELOUS, NICE, PERFECT };
-	enum OPTIONMENUCHOICE { VOLUME = 0, DIFFICULTY, MUSIC, BACK };
-	enum GAMESTATE { INIT, OPTIONS, GAME, END };
-	enum GAMEDIFFICULTY { DIFF_EASY = 0, DIFF_MEDIUM, DIFF_HARD };
-	enum VOLUMELEVEL { VOL_OFF = 0, VOL_LOW, VOL_MEDIUM, VOL_HIGH, VOL_FULL };
+	enum class STARTMENUCHOICE { START = 0, OPTION, QUIT };
+	enum class GAMEMUSICCHOICE { BREEZY = 0, RUNBOY, MIAMI };
+	enum class GOODSCOREEFFECT { BRAVO = 0, GOOD, PRETTYGOOD, GREAT, MARVELOUS, NICE, PERFECT };
+	enum class OPTIONMENUCHOICE { VOLUME = 0, DIFFICULTY, MUSIC, CAMERA, BACK };
+	enum class GAMESTATE { INIT = 0, OPTIONS, GAME, END };
+	enum class GAMEDIFFICULTY { DIFF_EASY = 0, DIFF_MEDIUM, DIFF_HARD };
+	enum class VOLUMELEVEL { VOL_OFF = 0, VOL_LOW, VOL_MEDIUM, VOL_HIGH, VOL_FULL };
+	enum class CameraOptions { Behind = 0, Deg_45, Side };
 
 	SceneApp(gef::Platform& platform);
 	void Init();
@@ -59,35 +62,6 @@ public:
 	gef::Mesh* GetFirstMesh(gef::Scene* scene);
 	void CameraRotateAroundObject(float rotate);
 private:
-	void GameInit();
-	void FrontendInit();
-	void FrontendUpdate(float frame_time);
-	void FrontendRender();
-
-	void OptionsUpdate(float frame_time);
-	void OptionsRender();
-	void OptionsRelease();
-
-	void GameUpdate(float frame_time);
-	void GameRender();
-	void GameRelease();
-
-	void EndInit();
-	void EndUpdate(float frame_time);
-	void EndRender();
-	void EndRelease();
-	void InitOptions();
-	void InitPlayer();
-	void InitGround();
-	void InitRoad();
-	void InitBuildings();
-	void InitObstacles();
-	void InitFont();
-	void CleanUpFont();
-	void DrawHUD();
-	void SetupLights();
-	void SetupCamera();
-	void UpdateSimulation(float frame_time);
 
 	STARTMENUCHOICE current_start_menu_choice_;
 	OPTIONMENUCHOICE current_option_menu_choice_;
@@ -95,11 +69,41 @@ private:
 	GAMESTATE game_state_;
 	GAMEDIFFICULTY difficulty_state_;
 	VOLUMELEVEL volume_state_;
+	CameraOptions camera_state_;
+
+	void GameInit();
+	void FrontendInit();
+	void InitPlayer();
+	void InitGround();
+	void InitFont();
+
+	void FrontendUpdate(float frame_time);
+	void FrontendRender();
+
+	void OptionsUpdate(float frame_time);
+	void OptionsRender();
+
+	void GameUpdate(float frame_time);
+	void GameRender();
+
+	void EndInit();
+	void EndUpdate(float frame_time);
+	void EndRender();
+
+	void CleanUpFont();
+	void DrawHUD();
+	void SetupLights();
+	void SetupCamera();
+	void UpdateSimulation(float frame_time);
+
 
 	gef::Animation* LoadAnimation(const char* anim_scene_ilename, const char* anim_name);
 	gef::Scene* LoadSceneAssets(gef::Platform& platform, const char* filename);
 	gef::Mesh* GetMeshFromSceneAssets(gef::Scene* scene);
 
+	Roads roads;
+	Buildings buildings;
+	Obstacles obstacles;
 
 	gef::SpriteRenderer* sprite_renderer_;
 	gef::Font* font_;
@@ -108,20 +112,11 @@ private:
 	gef::AudioManager* audio_manager_;
 	PrimitiveBuilder* primitive_builder_;
 
-	gef::Mesh* road_mesh;
 	gef::Mesh* player_mesh_;
 	gef::Mesh* ground_mesh_;
 
-
-
 	gef::Scene* ninja;
-	gef::Scene* road;
-	gef::Scene* samurai_Roads[5];
-	gef::Scene* military_Roads[5];
-	gef::Scene* apoc_Roads[5];
-	gef::Scene* samurai_Buildings[5];
-	gef::Scene* military_Buildings[5];
-	gef::Scene* apoc_Buildings[5];
+
 	gef::Scene* samurai_Obstacle[4];
 	gef::Scene* military_Obstacle[4];
 	gef::Scene* apoc_Obstacle[4];
@@ -140,28 +135,6 @@ private:
 	gef::MeshInstance startmodel;
 	gef::Vector4 startmodelV4;
 	gef::Matrix44 startmodelM44;
-
-
-
-	gef::MeshInstance militaryRoad_Mesh_Instance[NUMBER_OF_ROAD_MESH_INSTANCE];
-	gef::MeshInstance samurai_Road_Mesh_Instance[NUMBER_OF_ROAD_MESH_INSTANCE];
-	gef::MeshInstance apoc_Road_Mesh_Instance[NUMBER_OF_ROAD_MESH_INSTANCE];
-	gef::Vector4 military_Road_Mesh_Instance_V4[NUMBER_OF_ROAD_MESH_INSTANCE];
-	gef::Vector4 samurairoadmeshinstanceV4[NUMBER_OF_ROAD_MESH_INSTANCE];
-	gef::Vector4 apocroadmeshinstanceV4[NUMBER_OF_ROAD_MESH_INSTANCE];
-	gef::Matrix44 military_Road_Mesh_Instance_M44[NUMBER_OF_ROAD_MESH_INSTANCE];
-	gef::Matrix44 samurai_Road_Mesh_Instance_M44[NUMBER_OF_ROAD_MESH_INSTANCE];
-	gef::Matrix44 apoc_Road_MeshInstance_M44[NUMBER_OF_ROAD_MESH_INSTANCE];
-
-	gef::MeshInstance  military_Building_Mesh_Instance[NUMBER_OF_BUILDING_MESH_INSTANCE];
-	gef::MeshInstance  samurai_Building_Mesh_Instance[NUMBER_OF_BUILDING_MESH_INSTANCE];
-	gef::MeshInstance  apoc_Building_Mesh_Instance[NUMBER_OF_BUILDING_MESH_INSTANCE];
-	gef::Vector4 military_Buildings_Mesh_Instance_V4[NUMBER_OF_BUILDING_MESH_INSTANCE];
-	gef::Vector4 samurai_Buildings_Mesh_Instance_V4[NUMBER_OF_BUILDING_MESH_INSTANCE];
-	gef::Vector4 apoc_Buildings_Mesh_Instance_V4[NUMBER_OF_BUILDING_MESH_INSTANCE];
-	gef::Matrix44 military_Buildings_Mesh_Instance_M44[NUMBER_OF_BUILDING_MESH_INSTANCE];
-	gef::Matrix44 samurai_Buildings_Mesh_Instance_M44[NUMBER_OF_BUILDING_MESH_INSTANCE];
-	gef::Matrix44 apoc_Buildings_Mesh_Instance_M44[NUMBER_OF_BUILDING_MESH_INSTANCE];
 
 	gef::MeshInstance  military_Obstacle_Mesh_Instance[NUMBER_OF_OBSTACLE_MESH_INSTANCE];
 	gef::MeshInstance  samurai_Obstacle_Mesh_Instance[NUMBER_OF_OBSTACLE_MESH_INSTANCE];
@@ -249,24 +222,18 @@ private:
 
 	bool issliding_;
 
-	int* gameobstacledifficulty;
-	int* gameobstacledistance;
-	int* volumelevel;
-	
-	int audio_sample_id;
+	//std::vector<int> game_obstacle_distance = { 30,20,15 };
+	std::vector<int> volumelevel = { 0, 25, 50, 75, 100 };
+	std::vector<std::string> difficultytext = { "EASY","MEDIUM","HARD" };
+	std::vector<std::string> gamemusictext = { "BREEZY", "RUN BOY", "MIAMI" };
+	std::vector<std::string> cameraoptiontext = { " Side on " , " 45 Degree" , " Behind " };
+	std::vector<gef::Vector4> cameraoptionchoice;
 
-	std::string* difficultytext;
-	std::string* gamemusictext;
 	uint32 textcolors[2];
 
 	int counter;
 	int score;
-	int military_Road_Distance_Counter;
-	int samurai_Road_Distance_Counter;
-	int apoc_Road_Distance_Counter;
-	int military_Building_Distance_Counter;
-	int samurai_Building_Distance_Counter;
-	int apoc_Building_Distance_Counter;
+
 	int military_Obstacle_Distance_Counter;
 	int samurai_Obstacle_Distance_Counter;
 	int apoc_Obstacle_Distance_Counter;

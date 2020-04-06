@@ -33,6 +33,15 @@
     <ClCompile Include="..\..\motion_clip_player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Roads.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Buildings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Obstacles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\scene_app.h">
@@ -45,6 +54,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\motion_clip_player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Roads.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Buildings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Obstacles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

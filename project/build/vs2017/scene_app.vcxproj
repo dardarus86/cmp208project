@@ -223,12 +223,18 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Buildings.cpp" />
+    <ClCompile Include="Obstacles.cpp" />
+    <ClCompile Include="Roads.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\game_object.h" />
     <ClInclude Include="..\..\motion_clip_player.h" />
     <ClInclude Include="..\..\primitive_builder.h" />
     <ClInclude Include="..\..\scene_app.h" />
+    <ClInclude Include="Buildings.h" />
+    <ClInclude Include="Obstacles.h" />
+    <ClInclude Include="Roads.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
