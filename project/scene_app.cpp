@@ -131,7 +131,7 @@ void SceneApp::InitPlayer()
 	// create a physics body for the player
 
 	player_body_def.type = b2_dynamicBody;
-	player_body_def.position = b2Vec2(800.0f, 0.0f);
+	player_body_def.position = b2Vec2(0.0f, 0.0f);
 	player_body_ = world_->CreateBody(&player_body_def);
 
 	// create the shape for the player
@@ -481,7 +481,7 @@ void SceneApp::GameUpdate(float frame_time)
 	counter--;
 	score++;
 
-	/*if (score % 300 == 0)
+	if (score % 300 == 0)
 	{
 		audio_manager_->PlaySample(rand() % 6 + 1);
 	}
@@ -489,7 +489,7 @@ void SceneApp::GameUpdate(float frame_time)
 	if (score  < 4)
 	{
 		audio_manager_->PlaySample(rand() % 3 + 8);
-	}*/
+	}
 
 	if (player_body_->GetPosition().x > 1190)
 	{
@@ -574,13 +574,20 @@ void SceneApp::GameUpdate(float frame_time)
 		player_body_->CreateFixture(&player_fixture_def);
 		issliding_ = false;
 		anim_player_.set_clip(walk_anim_);
-		playerslideV4 = gef::Vector4(0.5f, 1.2, 0, 0);
+		playerslideV4 = gef::Vector4(0.5f, 5.2, 0, 0);
 		player_transformslideM44.SetIdentity();
 		player_transformslideM44.SetTranslation(playerslideV4);
 		player_rotateslideM44.RotationZ(gef::DegToRad(0.0f));
 		gef::Matrix44 combined3 = (player_scaleM44 * player_rotateM44 * player_rotateslideM44 * player_transformslideM44);
 		combined3.SetTranslation(playerPosition);
 		playerskinned->set_transform(combined3);
+	}
+
+	if (player_body_->GetPosition().y < 0.03)
+	{
+		anim_player_.set_clip(walk_anim_);
+		playeradjusty = b2Vec2(player_body_->GetPosition().x, 0.00);
+		player_body_->SetTransform(playeradjusty,0);
 	}
 	
 	if (input_manager_->keyboard()->IsKeyDown(gef::Keyboard::KC_W) && counter <= 0)
@@ -601,7 +608,7 @@ void SceneApp::GameUpdate(float frame_time)
 		anim_player_.set_clip(up_anim_);
 		anim_player_.set_looping(false);
 	}
-	else if (player_body_->GetLinearVelocity().y < -0.05)
+	else if (player_body_->GetLinearVelocity().y < -0.02)
 	{
 		anim_player_.set_clip(down_anim_);
 		anim_player_.set_looping(false);

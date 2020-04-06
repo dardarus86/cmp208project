@@ -55,7 +55,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		int obstacle_Up_Or_Down = rand() % 100;
 		if (obstacle_Up_Or_Down > 50)
 		{
-			obstacle_height = 2;
+			obstacle_height = 2.5;
 		}
 		else
 		{
@@ -70,7 +70,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		apoc_body_def[i].type = b2_staticBody;
 		apoc_body_def[i].position = apoc_obstacle_position_B2vec2[i];
 		apoc_obstacle_B2B[i] = world->CreateBody(&apoc_body_def[i]);
-		apoc_shape.SetAsBox(1.0, 2.7);
+		apoc_shape.SetAsBox(1.0, 3.4);
 		apoc_obstacle_fixture_def[i].shape = &apoc_shape;
 		apoc_obstacle_B2B[i]->CreateFixture(&apoc_obstacle_fixture_def[i]);
 		apoc_obstacle_distance_counter = apoc_obstacle_distance_counter + obstacle_Random_Distance;
@@ -86,7 +86,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		int obstacle_Up_Or_Down = rand() % 100;
 		if (obstacle_Up_Or_Down > 50)
 		{
-			obstacle_height = 2;
+			obstacle_height = 2.5;
 		}
 		else
 		{
@@ -106,7 +106,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 
 		military_body_def[i].position = military_obstacle_position_B2vec2[i];
 		military_obstacle_B2B[i] = world->CreateBody(&military_body_def[i]);
-		military_shape.SetAsBox(1.0, 4.1);
+		military_shape.SetAsBox(1.0, 3.25);
 		military_obstacle_fixture_def[i].shape = &military_shape;
 		military_obstacle_B2B[i]->CreateFixture(&military_obstacle_fixture_def[i]);
 
@@ -125,7 +125,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		int obstacle_Up_Or_Down = rand() % 100;
 		if (obstacle_Up_Or_Down > 50)
 		{
-			obstacle_height = 2;
+			obstacle_height = 2.5;
 		}
 		else
 		{
@@ -140,7 +140,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		samurai_body_def[i].type = b2_staticBody;
 		samurai_body_def[i].position = samurai_obstacle_position_B2vec2[i];
 		samurai_obstacle_B2B[i] = world->CreateBody(&samurai_body_def[i]);
-		samurai_shape.SetAsBox(1.0, 2.8);
+		samurai_shape.SetAsBox(1.0, 3.9);
 		samurai_obstacle_fixture_def[i].shape = &military_shape;
 		samurai_obstacle_B2B[i]->CreateFixture(&samurai_obstacle_fixture_def[i]);
 		samurai_obstacle_distance_counter = samurai_obstacle_distance_counter + obstacle_Random_Distance;

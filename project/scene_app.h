@@ -164,6 +164,7 @@ private:
 	gef::Vector4 playerscalingV4;
 	gef::Vector4 playerrotateV4;
 	gef::Vector4 playerslideV4;
+	
 	gef::Matrix44 camera_eye_transformM44;
 	gef::Matrix44 player_scaleM44;
 	gef::Matrix44 player_rotateM44;
@@ -190,6 +191,7 @@ private:
 	b2Body* ground_body_;
 	b2Body* ground2_body_;
 	b2Body* player_body_;
+	b2Vec2 playeradjusty;
 
 	b2Fixture* fixturelistplayer;
 
