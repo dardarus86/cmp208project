@@ -225,6 +225,7 @@
     </ClCompile>
     <ClCompile Include="Buildings.cpp" />
     <ClCompile Include="Obstacles.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Roads.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +235,7 @@
     <ClInclude Include="..\..\scene_app.h" />
     <ClInclude Include="Buildings.h" />
     <ClInclude Include="Obstacles.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Roads.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
