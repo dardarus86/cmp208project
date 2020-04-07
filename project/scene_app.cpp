@@ -12,8 +12,10 @@
 #include <graphics/scene.h>
 #include <animation/skeleton.h>
 #include <animation/animation.h>
+#include <graphics/sprite.h>
 #include <stdlib.h>
 #include <time.h>  
+#include "load_texture.h"
 
 
 
@@ -31,33 +33,35 @@ SceneApp::SceneApp(gef::Platform& platform) :
 
 void SceneApp::Init()
 {
-	game_state_ = GAMESTATE::INIT;
+	game_state_ = GAMESTATE::SPLASH;
 	difficulty_state_ = GAMEDIFFICULTY::DIFF_MEDIUM;
 	volume_state_ = VOLUMELEVEL::VOL_MEDIUM;
 	current_start_menu_choice_ = STARTMENUCHOICE::START;
 	current_option_menu_choice_ = OPTIONMENUCHOICE::VOLUME;
 	camera_state_ = CameraOptions::Behind;
-	textcolors[0] = 0xffcc0000;
+	textcolors[0] = 0xffffffff;
 	textcolors[1] = 0xff0000dd;
-	
-
-	//This was my original code for working out how many obstancles were present depending on the difficulty.
-	//gameobstacledifficulty = new int[NUMBER_OF_DIFFICULTY] { 500/35, 500/25, 500/20 };
-	   
-	GameInit();
-	EndInit();
-	InitFont();
-}
-
-void SceneApp::GameInit()
-{
-
+	textcolors[2] = 0xffabcdef;
 	sprite_renderer_ = gef::SpriteRenderer::Create(platform_);
 	renderer_3d_ = gef::Renderer3D::Create(platform_);
 	primitive_builder_ = new PrimitiveBuilder(platform_);
 	input_manager_ = gef::InputManager::Create(platform_);
 	audio_manager_ = gef::AudioManager::Create();
+
+	//This was my original code for working out how many obstancles were present depending on the difficulty.
+	//gameobstacledifficulty = new int[NUMBER_OF_DIFFICULTY] { 500/35, 500/25, 500/20 };
 	audio_manager_->LoadMusic("audio/music/start.wav", platform_);
+	GameInit();
+	EndInit();
+	InitFont();
+	InitBackgroundImages();
+}
+
+void SceneApp::GameInit()
+{
+
+
+	
 	audio_manager_->PlayMusic();
 	audio_manager_->LoadSample("audio/soundeffects/menu/select1.wav", platform_);//0
 	audio_manager_->LoadSample("audio/soundeffects/good/bravo.wav", platform_);//1
@@ -71,12 +75,13 @@ void SceneApp::GameInit()
 	audio_manager_->LoadSample("audio/soundeffects/bad/boo1.wav", platform_);//9
 	audio_manager_->LoadSample("audio/soundeffects/bad/boo2.wav", platform_);//10
 	audio_manager_->LoadSample("audio/soundeffects/bad/boo3.wav", platform_);//11
+
 	audio_manager_->SetMasterVolume(volumelevel.at(static_cast<int>(volume_state_)));
 	srand(time(NULL));
 	b2Vec2 gravity(0.0f, -9.81f);
 	world_ = new b2World(gravity);
 	score = 0;
-	
+	boocounter = 30;
 	player.InitPlayer(world_, platform_);
 	InitGround();
 	buildings.InitBuildings(platform_);
@@ -127,6 +132,28 @@ void SceneApp::InitFont()
 	font_->Load("Bubblegum.ttf");
 }
 
+void SceneApp::InitBackgroundImages()
+{
+	splash_screen__texture_ = CreateTextureFromPNG("images/splash.png", platform_);
+	options_texture_ = CreateTextureFromPNG("images/option.png", platform_);
+	menu_texture_ = CreateTextureFromPNG("images/main.png", platform_);
+
+	splash_background_.set_texture(splash_screen__texture_);
+	splash_background_.set_position(gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.5f, -0.99f));
+	splash_background_.set_height(960.0f);
+	splash_background_.set_width(1280.0f);
+	main_menu_background_.set_texture(menu_texture_);
+	main_menu_background_.set_position(gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.5f, -0.99f));
+	main_menu_background_.set_height(960.0f);
+	main_menu_background_.set_width(1280.0f);
+	options_background_.set_texture(options_texture_);
+	options_background_.set_position(gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.5f, -0.99f));
+	options_background_.set_height(960.0f);
+	options_background_.set_width(1280.0f);
+
+}
+
+
 bool SceneApp::Update(float frame_time)
 {
 	fps_ = 1.0f / frame_time;
@@ -136,6 +163,9 @@ bool SceneApp::Update(float frame_time)
 
 	switch (game_state_)
 	{
+	case GAMESTATE::SPLASH:
+		SplashUpdate(frame_time);
+		break;
 	case GAMESTATE::INIT:
 		FrontendUpdate(frame_time);
 		break;
@@ -166,6 +196,9 @@ void SceneApp::Render()
 {
 	switch (game_state_)
 	{
+	case GAMESTATE::SPLASH:
+		SplashRender();
+		break;
 	case GAMESTATE::INIT:
 		FrontendRender();
 		break;
@@ -180,6 +213,24 @@ void SceneApp::Render()
 		break;
 
 	}
+}
+
+
+void SceneApp::SplashUpdate(float frame_time)
+{
+	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_RETURN))
+	{
+		game_state_ = GAMESTATE::INIT;
+	}
+}
+
+void SceneApp::SplashRender()
+{
+	sprite_renderer_->Begin();
+	   
+	sprite_renderer_->DrawSprite(splash_background_);
+	
+	sprite_renderer_->End();
 }
 
 
@@ -250,6 +301,8 @@ void SceneApp::FrontendRender()
 
 	sprite_renderer_->Begin();
 
+	sprite_renderer_->DrawSprite(main_menu_background_);
+
 	font_->RenderText(
 		sprite_renderer_,
 		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.5f - 56.0f, -0.99f),
@@ -260,7 +313,7 @@ void SceneApp::FrontendRender()
 
 	font_->RenderText(
 		sprite_renderer_,
-		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.6f - 56.0f, -0.99f),
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.55f - 56.0f, -0.99f),
 		1.0f,
 		textcolors[current_start_menu_choice_ == STARTMENUCHOICE::OPTION],
 		gef::TJ_CENTRE,
@@ -268,7 +321,7 @@ void SceneApp::FrontendRender()
 
 	font_->RenderText(
 		sprite_renderer_,
-		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.7f - 56.0f, -0.99f),
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.60f - 56.0f, -0.99f),
 		1.0f,
 		textcolors[current_start_menu_choice_ == STARTMENUCHOICE::QUIT],
 		gef::TJ_CENTRE,
@@ -352,7 +405,7 @@ void SceneApp::OptionsRender()
 
 	sprite_renderer_->Begin();
 
-
+	sprite_renderer_->DrawSprite(options_background_);
 
 	font_->RenderText(
 		sprite_renderer_,
@@ -360,40 +413,40 @@ void SceneApp::OptionsRender()
 		1.5f,
 		textcolors[current_option_menu_choice_ == OPTIONMENUCHOICE::VOLUME],
 		gef::TJ_LEFT,
-		"VOLUME: %i", volumelevel.at(static_cast<int>(volume_state_)));
+		"      VOLUME: %i", volumelevel.at(static_cast<int>(volume_state_)));
 
 
 	font_->RenderText(
 		sprite_renderer_,
-		gef::Vector4(platform_.width() * 0.225f, platform_.height() * 0.5f - 56.0f, -0.99f),
+		gef::Vector4(platform_.width() * 0.225f, platform_.height() * 0.48f - 56.0f, -0.99f),
 		1.5f,
 		textcolors[current_option_menu_choice_ == OPTIONMENUCHOICE::DIFFICULTY],
 		gef::TJ_LEFT,
-		"DIFFICULTY: %s", difficultytext.at(static_cast<int>(difficulty_state_)));
+		"        DIFFICULTY: %s", difficultytext.at(static_cast<int>(difficulty_state_)));
 
 	font_->RenderText(
 		sprite_renderer_,
-		gef::Vector4(platform_.width() * 0.36f, platform_.height() * 0.6f - 56.0f, -0.99f),
+		gef::Vector4(platform_.width() * 0.36f, platform_.height() * 0.56f - 56.0f, -0.99f),
 		1.5f,
 		textcolors[current_option_menu_choice_ == OPTIONMENUCHOICE::MUSIC],
 		gef::TJ_LEFT,
-		"SONG: %s", gamemusictext.at(static_cast<int>(game_music_state)));
+		"     SONG: %s", gamemusictext.at(static_cast<int>(game_music_state)));
 
 	font_->RenderText(
 		sprite_renderer_,
-		gef::Vector4(platform_.width() * 0.29f, platform_.height() * 0.7f - 56.0f, -0.99f),
+		gef::Vector4(platform_.width() * 0.29f, platform_.height() * 0.64f - 56.0f, -0.99f),
 		1.5f,
 		textcolors[current_option_menu_choice_ == OPTIONMENUCHOICE::CAMERA],
 		gef::TJ_LEFT,
-		"Camera:%s", cameraoptiontext.at(static_cast<int>(camera_state_)));
+		"       Camera:%s", cameraoptiontext.at(static_cast<int>(camera_state_)));
 
 	font_->RenderText(
 		sprite_renderer_,
-		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.8f - 56.0f, -0.99f),
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.72f - 56.0f, -0.99f),
 		1.5f,
 		textcolors[current_option_menu_choice_ == OPTIONMENUCHOICE::BACK],
 		gef::TJ_CENTRE,
-		"BACK");
+		"  BACK");
 
 	sprite_renderer_->End();
 }
@@ -405,6 +458,7 @@ void SceneApp::GameUpdate(float frame_time)
 	fps_ = 1.0f / frame_time;
 	input_manager_->Update();
 	score++;
+	boocounter--;
 
 	cameraoptionchoice =
 	{
@@ -421,15 +475,17 @@ void SceneApp::GameUpdate(float frame_time)
 	camera_lookat_V4 = camera_lookat_transformV4;
 
 
-	player.update(frame_time, score, input_manager_);
-	if (score % 300 == 0)
+	player.update(frame_time, &score, input_manager_);
+	if (score % 300 == 0 && boocounter <= 0)
 	{
 		audio_manager_->PlaySample(rand() % 6 + 1);
+		boocounter = 50;
 	}
 
-	if (score  < 4)
+	if (score  < 4 && boocounter <= 0)
 	{
 		audio_manager_->PlaySample(rand() % 3 + 8);
+		boocounter = 50;
 	}
 
 	if (player.GetGoalFinished())
@@ -446,9 +502,16 @@ void SceneApp::GameUpdate(float frame_time)
 		game_state_ = GAMESTATE::END;
 	}
 
+	if (player.GetPlayerBodyXVecolity() < 4)
+	{
+		score -= 5;
+	}
 
 
-
+	if (boocounter < 0)
+	{
+		boocounter = 0;
+	}
 
 	if (score < 0)
 	{
@@ -499,18 +562,25 @@ void SceneApp::EndUpdate(float frame_time)
 		switch (game_music_state)
 		{
 		case GAMEMUSICCHOICE::BREEZY:
+			CleanUp();
+			Init();
 			audio_manager_->LoadMusic("audio/music/breezy.wav", platform_);
 			audio_manager_->PlayMusic();
 			score = 0;
+
 			game_state_ = GAMESTATE::GAME;
 			break;
 		case GAMEMUSICCHOICE::RUNBOY:
+			CleanUp();
+			Init();
 			audio_manager_->LoadMusic("audio/music/runboy.wav", platform_);
 			audio_manager_->PlayMusic();
 			score = 0;
 			game_state_ = GAMESTATE::GAME;
 			break;
 		case GAMEMUSICCHOICE::MIAMI:
+			CleanUp();
+			Init();
 			audio_manager_->LoadMusic("audio/music/miami.wav", platform_);
 			audio_manager_->PlayMusic();
 			score = 0;
@@ -523,6 +593,8 @@ void SceneApp::EndUpdate(float frame_time)
 
 	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_ESCAPE))
 	{
+		CleanUp();
+		Init();
 		audio_manager_->LoadMusic("audio/music/start.wav", platform_);
 		audio_manager_->PlayMusic();
 		game_state_ = GAMESTATE::INIT;
@@ -572,7 +644,7 @@ void SceneApp::EndRender()
 	sprite_renderer_->Begin(false);
 	font_->RenderText(
 		sprite_renderer_,
-		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.6f - 56.0f, -0.99f),
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.8f - 56.0f, -0.99f),
 		2.0f,
 		0xff20a5da,
 		gef::TJ_CENTRE,
@@ -580,7 +652,7 @@ void SceneApp::EndRender()
 
 	font_->RenderText(
 		sprite_renderer_,
-		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.70f - 56.0f, -0.99f),
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.88f - 56.0f, -0.99f),
 		1.0f,
 		0xff20a5da,
 		gef::TJ_CENTRE,
@@ -588,7 +660,7 @@ void SceneApp::EndRender()
 
 	font_->RenderText(
 		sprite_renderer_,
-		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.75f - 56.0f, -0.99f),
+		gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.92f - 56.0f, -0.99f),
 		1.0f,
 		0xff20a5da,
 		gef::TJ_CENTRE,
@@ -612,8 +684,9 @@ void SceneApp::DrawHUD()
 	if (font_)
 	{
 		// display frame rate
-		font_->RenderText(sprite_renderer_, gef::Vector4(850.0f, 510.0f, -0.9f), 1.0f, 0xffffffff, gef::TJ_LEFT, "FPS: %.1f", fps_);
-		font_->RenderText(sprite_renderer_, gef::Vector4(760.0f, 10.0f, -0.9f), 1.0f, 0xffffffff, gef::TJ_LEFT, "Score: %i", score);
+		font_->RenderText(sprite_renderer_, gef::Vector4(1075.0f, 10.0f, -0.9f), 1.0f, 0xffffffff, gef::TJ_LEFT, "Score: %i", score);
+		font_->RenderText(sprite_renderer_, gef::Vector4(1075.0f, 900.0f, -0.9f), 1.0f, 0xffffffff, gef::TJ_LEFT, "FPS: %.1f", fps_);
+		
 	}
 }
 void SceneApp::SetupLights()
@@ -789,6 +862,8 @@ void SceneApp::CleanUp()
 
 	delete sprite_renderer_;
 	sprite_renderer_ = NULL;
+
+	player.SetGoalFinished(false);
 }
 void SceneApp::CleanUpFont()
 {

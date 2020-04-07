@@ -45,15 +45,17 @@ class Player
 public:
 	void InitPlayer(b2World* world, gef::Platform& platform);
 	void Render(gef::Renderer3D* renderer);
-	void update(float frame_time, int score, gef::InputManager* inputmanager);
+	void update(float frame_time, int* score, gef::InputManager* inputmanager);
 	bool GetGoalFinished();
+	void SetGoalFinished(bool goalfinish);
+	void ReduceScore(int score);
 	float GetPlayerBodyX();
 	float GetPlayerBodyY();
+	float GetPlayerBodyXVecolity();
 private:
 
-	void SetGoalFinished(bool goalfinish);
 	
-
+	
 	void UpdateSimulation(float frame_time);
 
 	gef::Skeleton* GetFirstSkeleton(gef::Scene* scene);

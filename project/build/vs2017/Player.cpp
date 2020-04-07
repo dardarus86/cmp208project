@@ -87,7 +87,7 @@ void Player::Render(gef::Renderer3D* renderer)
 	renderer->DrawSkinnedMesh(*playerskinned, playerskinned->bone_matrices());
 }
 
-void Player::update(float frame_time, int score, gef::InputManager* inputmanager)
+void Player::update(float frame_time, int* score, gef::InputManager* inputmanager)
 {
 	counter--;
 
@@ -108,11 +108,6 @@ void Player::update(float frame_time, int score, gef::InputManager* inputmanager
 	if (player_body_->GetLinearVelocity().x < 7)
 	{
 		player_body_->ApplyForce(b2Vec2(5.0f, 0.0f), b2Vec2(player_body_->GetPosition().x, player_body_->GetPosition().y), true);
-	}
-	//when player slows down, decriment score
-	if (player_body_->GetLinearVelocity().x < 4)
-	{
-		score -= 5;
 	}
 
 	if (inputmanager->keyboard()->IsKeyDown(gef::Keyboard::KC_S))
@@ -172,7 +167,8 @@ void Player::update(float frame_time, int score, gef::InputManager* inputmanager
 	{
 		anim_player_.set_clip(down_anim_);
 		anim_player_.set_looping(false);
-		player_body_->ApplyForce(b2Vec2(2.0f, 0.0f), b2Vec2(player_body_->GetPosition().x, player_body_->GetPosition().y), true);
+		// we need to give it some velocity to make it a bit more realistic
+		player_body_->ApplyForce(b2Vec2(2.0f, 0.2f), b2Vec2(player_body_->GetPosition().x, player_body_->GetPosition().y), true);
 	}
 
 
@@ -219,6 +215,10 @@ bool Player::GetGoalFinished()
 {
 	return goalreached_;
 }
+void Player::ReduceScore(int score)
+{
+	score = -5;
+}
 float Player::GetPlayerBodyX()
 {
 	return player_body_->GetPosition().x;
@@ -226,6 +226,11 @@ float Player::GetPlayerBodyX()
 float Player::GetPlayerBodyY()
 {
 	return player_body_->GetPosition().y;
+}
+
+float Player::GetPlayerBodyXVecolity()
+{
+	return player_body_->GetLinearVelocity().x;
 }
 
 gef::Skeleton* Player::GetFirstSkeleton(gef::Scene* scene)

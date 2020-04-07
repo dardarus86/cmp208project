@@ -44,7 +44,7 @@ public:
 	enum class GAMEMUSICCHOICE { BREEZY = 0, RUNBOY, MIAMI };
 	enum class GOODSCOREEFFECT { BRAVO = 0, GOOD, PRETTYGOOD, GREAT, MARVELOUS, NICE, PERFECT };
 	enum class OPTIONMENUCHOICE { VOLUME = 0, DIFFICULTY, MUSIC, CAMERA, BACK };
-	enum class GAMESTATE { INIT = 0, OPTIONS, GAME, END };
+	enum class GAMESTATE { SPLASH = 0,INIT, OPTIONS, GAME, END };
 	enum class GAMEDIFFICULTY { DIFF_EASY = 0, DIFF_MEDIUM, DIFF_HARD };
 	enum class VOLUMELEVEL { VOL_OFF = 0, VOL_LOW, VOL_MEDIUM, VOL_HIGH, VOL_FULL };
 	enum class CameraOptions { Behind = 0, Deg_45, Side };
@@ -72,6 +72,9 @@ private:
 
 	void InitGround();
 	void InitFont();
+	void InitBackgroundImages();
+	void SplashUpdate(float frame_time);
+	void SplashRender();
 
 	void FrontendUpdate(float frame_time);
 	void FrontendRender();
@@ -108,6 +111,13 @@ private:
 	PrimitiveBuilder* primitive_builder_;
 
 	gef::Mesh* ground_mesh_;
+
+	gef::Texture* splash_screen__texture_;
+	gef::Texture* options_texture_;
+	gef::Texture* menu_texture_;
+	gef::Sprite splash_background_;
+	gef::Sprite options_background_;
+	gef::Sprite main_menu_background_;
 
 
 	gef::Scene* background;
@@ -149,10 +159,10 @@ private:
 	std::vector<std::string> cameraoptiontext = { " Side on " , " 45 Degree" , " Behind " };
 	std::vector<gef::Vector4> cameraoptionchoice;
 
-	uint32 textcolors[2];
+	uint32 textcolors[3];
 
 	int score;
-
+	int boocounter;
 
 
 };
