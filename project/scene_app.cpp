@@ -19,6 +19,7 @@
 
 
 
+
 SceneApp::SceneApp(gef::Platform& platform) :
 	Application(platform)
 	, sprite_renderer_(NULL)
@@ -52,16 +53,14 @@ void SceneApp::Init()
 	//gameobstacledifficulty = new int[NUMBER_OF_DIFFICULTY] { 500/35, 500/25, 500/20 };
 	audio_manager_->LoadMusic("audio/music/start.wav", platform_);
 	GameInit();
-	EndInit();
-	InitFont();
-	InitBackgroundImages();
+
 }
 
 void SceneApp::GameInit()
 {
-
-
-	
+	EndInit();
+	InitFont();
+	InitBackgroundImages();
 	audio_manager_->PlayMusic();
 	audio_manager_->LoadSample("audio/soundeffects/menu/select1.wav", platform_);//0
 	audio_manager_->LoadSample("audio/soundeffects/good/bravo.wav", platform_);//1
@@ -86,6 +85,7 @@ void SceneApp::GameInit()
 	InitGround();
 	buildings.InitBuildings(platform_);
 	roads.InitRoad(platform_);
+	zombies.InitZombies(world_, platform_);
 	//obstacles.InitObstacles(platform_, world_, static_cast<int>(difficulty_state_));
 	SetupLights();
 	SetupCamera();
@@ -130,6 +130,7 @@ void SceneApp::InitFont()
 {
 	font_ = new gef::Font(platform_);
 	font_->Load("Bubblegum.ttf");
+	
 }
 
 void SceneApp::InitBackgroundImages()
@@ -150,7 +151,7 @@ void SceneApp::InitBackgroundImages()
 	options_background_.set_position(gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.5f, -0.99f));
 	options_background_.set_height(960.0f);
 	options_background_.set_width(1280.0f);
-
+	
 }
 
 
@@ -229,7 +230,8 @@ void SceneApp::SplashRender()
 	sprite_renderer_->Begin();
 	   
 	sprite_renderer_->DrawSprite(splash_background_);
-	
+
+
 	sprite_renderer_->End();
 }
 
@@ -635,9 +637,7 @@ void SceneApp::EndRender()
 
 	renderer_3d_->Begin();
 
-	//anim_player_.set_clip(dance_anim_);
-	//renderer_3d_->DrawSkinnedMesh(*playerskinned, playerskinned->bone_matrices());
-	
+	zombies.Render(renderer_3d_);
 
 	renderer_3d_->End();
 
@@ -675,6 +675,7 @@ void SceneApp::EndRender()
 void SceneApp::EndInit()
 {
 	bool endmusicplaying_ = false;
+
 }
 
 
@@ -796,10 +797,6 @@ void SceneApp::CameraRotateAroundObject(float rotate)
 	//camera_eye_rotateV4.Transform(camera_eye_transformM44);
 	camera_eye_V4 = camera_lookat_V4 - offset;
 }
-
-
-
-
 
 gef::Mesh* SceneApp::GetMeshFromSceneAssets(gef::Scene* scene)
 {

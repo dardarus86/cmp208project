@@ -17,6 +17,7 @@
 #include "Buildings.h"
 #include "Obstacles.h"
 #include "Player.h"
+#include "Zombies.h"
 #define NUMBER_OF_DIFFICULTY 3
 #define START_MENU_CHOICES 3
 #define OPTION_MENU_CHOICES 5
@@ -102,6 +103,7 @@ private:
 	Buildings buildings;
 	Obstacles obstacles;
 	Player player;
+	Zombies zombies;
 
 	gef::SpriteRenderer* sprite_renderer_;
 	gef::Font* font_;
@@ -163,6 +165,7 @@ private:
 
 	int score;
 	int boocounter;
+
 
 
 };

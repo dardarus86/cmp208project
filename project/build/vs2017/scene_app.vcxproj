@@ -228,6 +228,7 @@
     <ClCompile Include="Obstacles.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Roads.cpp" />
+    <ClCompile Include="Zombies.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\game_object.h" />
@@ -239,6 +240,7 @@
     <ClInclude Include="Obstacles.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Roads.h" />
+    <ClInclude Include="Zombies.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

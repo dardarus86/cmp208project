@@ -39,7 +39,6 @@ void Player::InitPlayer(b2World* world, gef::Platform& platform)
 	down_anim_ = LoadAnimation("player/ninjadown.scn", "",platform);
 	dance_anim_ = LoadAnimation("player/ninjadance.scn", "", platform);
 
-
 	if (walk_anim_)
 	{
 		anim_player_.set_clip(walk_anim_);
@@ -48,17 +47,14 @@ void Player::InitPlayer(b2World* world, gef::Platform& platform)
 	}
 
 	// create a physics body for the player
-
 	player_body_def.type = b2_dynamicBody;
 	player_body_def.position = b2Vec2(0.0f, 0.0f);
 	player_body_ = world->CreateBody(&player_body_def);
 
 	// create the shape for the player
-
 	player_shape.SetAsBox(0.37f, 1.8f);
 
 	// create the fixture
-
 	player_fixture_def.shape = &player_shape;
 	player_fixture_def.density = 0.8f;
 	player_fixture_def.friction = 0.2f;
@@ -66,19 +62,12 @@ void Player::InitPlayer(b2World* world, gef::Platform& platform)
 	// create the fixture on the rigid body
 	player_body_->CreateFixture(&player_fixture_def);
 
-
-
-
-
-
-
-
 	// update visuals from simulation data
 	//player_.UpdateFromSimulation(player_body_);
 	//vel = player_body_->GetLinearVelocity();
 	// create a connection between the rigid body and GameObject
 	player_body_->SetUserData(&playerskinned);
-
+	
 }
 
 void Player::Render(gef::Renderer3D* renderer)
@@ -86,7 +75,6 @@ void Player::Render(gef::Renderer3D* renderer)
 
 	renderer->DrawSkinnedMesh(*playerskinned, playerskinned->bone_matrices());
 }
-
 void Player::update(float frame_time, int* score, gef::InputManager* inputmanager)
 {
 	counter--;
@@ -201,12 +189,6 @@ void Player::update(float frame_time, int* score, gef::InputManager* inputmanage
 }
 
 
-
-
-
-
-
-
 void Player::SetGoalFinished(bool goalfinish)
 {
 	goalreached_ = goalfinish;
@@ -258,11 +240,9 @@ gef::Mesh* Player::GetFirstMesh(gef::Scene* scene, gef::Platform& platform)
 			mesh = ninja->CreateMesh(platform, scene->mesh_data.front());
 	}
 
-	return mesh;;
+	return mesh;
 }
-void Player::UpdateSimulation(float frame_time)
-{
-}
+
 gef::Animation* Player::LoadAnimation(const char* anim_scene_filename, const char* anim_name, gef::Platform& platform)
 {
 	gef::Animation* anim = NULL;
