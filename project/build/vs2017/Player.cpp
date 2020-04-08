@@ -37,7 +37,6 @@ void Player::InitPlayer(b2World* world, gef::Platform& platform)
 	slide_anim_ = LoadAnimation("player/ninjafly.scn", "", platform);
 	up_anim_ = LoadAnimation("player/ninjaup.scn", "", platform);
 	down_anim_ = LoadAnimation("player/ninjadown.scn", "",platform);
-	dance_anim_ = LoadAnimation("player/ninjadance.scn", "", platform);
 
 	if (walk_anim_)
 	{
@@ -72,7 +71,6 @@ void Player::InitPlayer(b2World* world, gef::Platform& platform)
 
 void Player::Render(gef::Renderer3D* renderer)
 {
-
 	renderer->DrawSkinnedMesh(*playerskinned, playerskinned->bone_matrices());
 }
 void Player::update(float frame_time, int* score, gef::InputManager* inputmanager)

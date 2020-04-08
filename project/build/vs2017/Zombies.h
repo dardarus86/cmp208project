@@ -33,7 +33,7 @@ class Zombies
 public:
 	void InitZombies(b2World* world, gef::Platform& platform);
 	void Render(gef::Renderer3D* renderer);
-	void update(float frame_time, int* score, gef::InputManager* inputmanager);
+	void update(float frame_time);
 
 private:
 	gef::Skeleton* GetFirstSkeleton(gef::Scene* scene);
@@ -56,12 +56,12 @@ private:
 	gef::Scene* zombie_paul_scene_1;
 	gef::Scene* zombie_paul_scene_2;
 
-	gef::Vector4 zombie_chrisT_1_V4 = {-10,0,-10,0};
-	gef::Vector4 zombie_chrisT_2_V4 = { 10,0,-10,0 };
-	gef::Vector4 zombie_chrisA_1_V4 = { -20,0,0,0 };
-	gef::Vector4 zombie_chrisA_2_V4 = { 20,0,0,0 };
-	gef::Vector4 zombie_paul_1_V4 = { 30,0,0,0 };
-	gef::Vector4 zombie_paul_2_V4 = { 30,0,0,0 };
+	gef::Vector4 zombie_chrisT_1_V4 = {-1,0,-2,0};
+	gef::Vector4 zombie_chrisT_2_V4 = { 1,0,-2,0 };
+	gef::Vector4 zombie_chrisA_1_V4 = { 3,0,0,0 };
+	gef::Vector4 zombie_chrisA_2_V4 = { -3,0,0,0 };
+	gef::Vector4 zombie_paul_1_V4 = { 5,0,2,0 };
+	gef::Vector4 zombie_paul_2_V4 = {-5,0,2,0 };
 	gef::Vector4 zombie_scale_V4;
 
 	gef::Matrix44 zombie_chrisT_translate_1;

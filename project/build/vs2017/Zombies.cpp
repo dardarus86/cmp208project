@@ -16,12 +16,30 @@ void Zombies::InitZombies(b2World* world, gef::Platform& platform)
 
 	zombie_scaleM44.Scale(zombie_scale_V4);
 
-	zombie_chrisT_scene_1->ReadSceneFromFile(platform, "zombies/chrisT.scn");
-	zombie_chrisT_scene_2->ReadSceneFromFile(platform, "zombies/chrisT2.scn");
-	zombie_chrisA_scene_1->ReadSceneFromFile(platform, "zombies/chrisA.scn");
-	zombie_chrisA_scene_1->ReadSceneFromFile(platform, "zombies/chrisA2.scn");
+	zombie_chrisT_scene_1 = new gef::Scene();
+	zombie_chrisT_scene_2 = new gef::Scene();
+	zombie_chrisA_scene_1 = new gef::Scene();
+	zombie_chrisA_scene_2 = new gef::Scene();
+	zombie_paul_scene_1 = new gef::Scene();
+	zombie_paul_scene_2 = new gef::Scene();
+
+	zombie_chrisT_translate_1.SetIdentity();
+	zombie_chrisT_translate_2.SetIdentity();
+	zombie_chrisA_translate_1.SetIdentity();
+	zombie_chrisA_translate_2.SetIdentity();
+	zombie_paul_translate_1.SetIdentity();
+	zombie_paul_translate_2.SetIdentity();
+	zombie_rotateM44.SetIdentity();
+
+
+
+
+	zombie_chrisT_scene_1->ReadSceneFromFile(platform, "zombies/paul.scn");
+	zombie_chrisT_scene_2->ReadSceneFromFile(platform, "zombies/paul.scn");
+	zombie_chrisA_scene_1->ReadSceneFromFile(platform, "zombies/paul.scn");
+	zombie_chrisA_scene_2->ReadSceneFromFile(platform, "zombies/paul.scn");
 	zombie_paul_scene_1->ReadSceneFromFile(platform, "zombies/paul.scn");
-	zombie_paul_scene_1->ReadSceneFromFile(platform, "zombies/paul2.scn");
+	zombie_paul_scene_2->ReadSceneFromFile(platform, "zombies/paul.scn");
 
 	zombie_chrisT_scene_1->CreateMaterials(platform);
 	zombie_chrisT_scene_2->CreateMaterials(platform);
@@ -78,7 +96,7 @@ void Zombies::InitZombies(b2World* world, gef::Platform& platform)
 	{
 		zombie_paul_player_skinned_2 = new gef::SkinnedMeshInstance(*zombie_paul_skeleton_2);
 		zombie_paul_anim_player_2_.Init(zombie_paul_player_skinned_2->bind_pose());
-		zombie_paul_player_skinned_2->set_mesh(zombie_chrisT_mesh_2);
+		zombie_paul_player_skinned_2->set_mesh(zombie_paul_mesh_2);
 	}
 
 	gef::Matrix44 zombie_chrisT_translate_1 = zombie_scaleM44;
@@ -97,14 +115,14 @@ void Zombies::InitZombies(b2World* world, gef::Platform& platform)
 
 	zombie_chrisT_player_skinned_1->set_transform(zombie_chrisT_translate_1);
 	zombie_chrisT_player_skinned_2->set_transform(zombie_chrisT_translate_2);
-	zombie_chrisT_player_skinned_1->set_transform(zombie_chrisA_translate_1);
-	zombie_chrisT_player_skinned_2->set_transform(zombie_chrisA_translate_2);
+	zombie_chrisA_player_skinned_1->set_transform(zombie_chrisA_translate_1);
+	zombie_chrisA_player_skinned_2->set_transform(zombie_chrisA_translate_2);
 	zombie_paul_player_skinned_1->set_transform(zombie_paul_translate_1);
 	zombie_paul_player_skinned_2->set_transform(zombie_paul_translate_2);
 
-	chrisT_dance_anim_ = LoadAnimation("player/chrisT.scn", "", platform);
-	chrisA_dance_anim_ = LoadAnimation("player/chrisA.scn", "", platform);
-	paul_dance_anim_ = LoadAnimation("player/paul.scn", "", platform);
+	chrisT_dance_anim_ = LoadAnimation("zombies/chrisTdance.scn", "", platform);
+	chrisA_dance_anim_ = LoadAnimation("zombies/chrisAdance.scn", "", platform);
+	paul_dance_anim_ = LoadAnimation("zombies/pauldance.scn", "", platform);
 
 	if (chrisT_dance_anim_)
 	{
@@ -142,8 +160,40 @@ void Zombies::Render(gef::Renderer3D* renderer)
 	renderer->DrawSkinnedMesh(*zombie_paul_player_skinned_2, zombie_paul_player_skinned_2->bone_matrices());
 }
 
-void Zombies::update(float frame_time, int* score, gef::InputManager* inputmanager)
+void Zombies::update(float frame_time)
 {
+	if (zombie_chrisT_player_skinned_1)
+	{
+		zombie_chrisT_anim_player_1_.Update(frame_time, zombie_chrisT_player_skinned_1->bind_pose());
+		zombie_chrisT_player_skinned_1->UpdateBoneMatrices(zombie_chrisT_anim_player_1_.pose());
+	}
+	if (zombie_chrisT_player_skinned_2)
+	{
+		zombie_chrisT_anim_player_2_.Update(frame_time, zombie_chrisT_player_skinned_2->bind_pose());
+		zombie_chrisT_player_skinned_2->UpdateBoneMatrices(zombie_chrisT_anim_player_2_.pose());
+	}
+	if (zombie_chrisA_player_skinned_1)
+	{
+		zombie_chrisA_anim_player_1_.Update(frame_time, zombie_chrisA_player_skinned_1->bind_pose());
+		zombie_chrisA_player_skinned_1->UpdateBoneMatrices(zombie_chrisA_anim_player_1_.pose());
+	}
+	if (zombie_chrisA_player_skinned_2)
+	{
+		zombie_chrisA_anim_player_2_.Update(frame_time, zombie_chrisA_player_skinned_2->bind_pose());
+		zombie_chrisA_player_skinned_2->UpdateBoneMatrices(zombie_chrisA_anim_player_2_.pose());
+	}
+	if (zombie_paul_player_skinned_1)
+	{
+		zombie_paul_anim_player_1_.Update(frame_time, zombie_paul_player_skinned_1->bind_pose());
+		zombie_paul_player_skinned_1->UpdateBoneMatrices(zombie_paul_anim_player_1_.pose());
+	}
+	if (zombie_paul_player_skinned_2)
+	{
+		zombie_paul_anim_player_2_.Update(frame_time, zombie_paul_player_skinned_2->bind_pose());
+		zombie_paul_player_skinned_2->UpdateBoneMatrices(zombie_paul_anim_player_2_.pose());
+	}
+
+
 
 }
 

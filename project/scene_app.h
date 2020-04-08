@@ -146,7 +146,7 @@ private:
 	b2Body* ground_body_;
 
 	
-
+	;
 	// audio variables
 
 	float fps_;

@@ -83,7 +83,6 @@ private:
 	gef::Animation* slide_anim_;
 	gef::Animation* up_anim_;
 	gef::Animation* down_anim_;
-	gef::Animation* dance_anim_;
 	gef::SkinnedMeshInstance* playerskinned;
 
 	b2Body* player_body_;

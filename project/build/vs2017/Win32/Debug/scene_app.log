@@ -1,0 +1,49 @@
+﻿  game_object.cpp
+  main_d3d11.cpp
+  motion_clip_player.cpp
+  primitive_builder.cpp
+  scene_app.cpp
+F:\C++\cmp208\project\scene_app.cpp(42,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(222,48): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(223,47): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(224,44): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(365,84): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(366,51): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(367,48): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(486,52): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(487,51): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(488,48): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(496,77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(497,75): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(498,69): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Generating Code...
+gef_d3d11.lib(ThreadImpl.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(ThreadImpl.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SleepImpl.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(SleepImpl.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(MutexImpl.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(MutexImpl.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(MemoryInputStream.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(MemoryInputStream.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(FileInputStream.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(FileInputStream.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(Time.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(Time.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(Thread.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(Thread.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(Sleep.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(Sleep.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(Mutex.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(Mutex.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(Lock.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(Lock.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(Err.cpp.obj) : warning LNK4099: PDB 'sfml-system-s-d.pdb' was not found with 'gef_d3d11.lib(Err.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-system-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SoundFileWriterWav.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(SoundFileWriterWav.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SoundFileWriterOgg.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(SoundFileWriterOgg.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SoundFileWriterFlac.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(SoundFileWriterFlac.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SoundFileReaderWav.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(SoundFileReaderWav.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SoundFileReaderOgg.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(SoundFileReaderOgg.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SoundFileReaderFlac.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(SoundFileReaderFlac.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SoundFileFactory.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(SoundFileFactory.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SoundStream.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(SoundStream.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SoundSource.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(SoundSource.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(OutputSoundFile.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(OutputSoundFile.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(InputSoundFile.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(InputSoundFile.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(SoundBuffer.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(SoundBuffer.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(Sound.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(Sound.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(Music.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(Music.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(Listener.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(Listener.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(AudioDevice.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(AudioDevice.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(AlResource.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(AlResource.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+gef_d3d11.lib(ALCheck.cpp.obj) : warning LNK4099: PDB 'sfml-audio-s-d.pdb' was not found with 'gef_d3d11.lib(ALCheck.cpp.obj)' or at 'F:\C++\cmp208\project\build\vs2017\Win32\Debug\sfml-audio-s-d.pdb'; linking object as if no debug info
+  scene_app.vcxproj -> F:\C++\cmp208\project\build\vs2017\Win32\Debug\scene_app.exe

@@ -1,0 +1,40 @@
+﻿  main_d3d11.cpp
+  scene_app.cpp
+F:\C++\cmp208\project\scene_app.cpp(75,48): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+F:\C++\cmp208\project\scene_app.cpp(76,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+F:\C++\cmp208\project\scene_app.cpp(352,50): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+F:\C++\cmp208\project\scene_app.cpp(374,50): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+  Obstacles.cpp
+F:\C++\cmp208\project\build\vs2017\Obstacles.cpp(66,52): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\build\vs2017\Obstacles.cpp(69,45): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+F:\C++\cmp208\project\build\vs2017\Obstacles.cpp(73,31): warning C4305: 'argument': truncation from 'double' to 'float'
+F:\C++\cmp208\project\build\vs2017\Obstacles.cpp(98,56): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\build\vs2017\Obstacles.cpp(104,49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+F:\C++\cmp208\project\build\vs2017\Obstacles.cpp(136,55): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\build\vs2017\Obstacles.cpp(139,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+F:\C++\cmp208\project\build\vs2017\Obstacles.cpp(143,34): warning C4305: 'argument': truncation from 'double' to 'float'
+  Player.cpp
+F:\C++\cmp208\project\build\vs2017\Player.cpp(130,47): warning C4305: 'argument': truncation from 'double' to 'const float'
+  Roads.cpp
+F:\C++\cmp208\project\build\vs2017\Roads.cpp(77,52): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\build\vs2017\Roads.cpp(78,88): warning C4305: 'argument': truncation from 'double' to 'const float'
+F:\C++\cmp208\project\build\vs2017\Roads.cpp(78,47): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+F:\C++\cmp208\project\build\vs2017\Roads.cpp(79,44): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+  Generating code
+  37 of 3762 functions ( 1.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    13 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  scene_app.vcxproj -> F:\C++\cmp208\project\build\vs2017\x64\Release\scene_app.exe

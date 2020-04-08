@@ -48,9 +48,6 @@ void SceneApp::Init()
 	primitive_builder_ = new PrimitiveBuilder(platform_);
 	input_manager_ = gef::InputManager::Create(platform_);
 	audio_manager_ = gef::AudioManager::Create();
-
-	//This was my original code for working out how many obstancles were present depending on the difficulty.
-	//gameobstacledifficulty = new int[NUMBER_OF_DIFFICULTY] { 500/35, 500/25, 500/20 };
 	audio_manager_->LoadMusic("audio/music/start.wav", platform_);
 	GameInit();
 
@@ -558,7 +555,6 @@ void SceneApp::GameRender()
 
 void SceneApp::EndUpdate(float frame_time)
 {
-
 	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_RETURN))
 	{
 		switch (game_music_state)
@@ -566,6 +562,7 @@ void SceneApp::EndUpdate(float frame_time)
 		case GAMEMUSICCHOICE::BREEZY:
 			CleanUp();
 			Init();
+			obstacles.InitObstacles(platform_, world_, static_cast<int>(difficulty_state_));
 			audio_manager_->LoadMusic("audio/music/breezy.wav", platform_);
 			audio_manager_->PlayMusic();
 			score = 0;
@@ -575,6 +572,7 @@ void SceneApp::EndUpdate(float frame_time)
 		case GAMEMUSICCHOICE::RUNBOY:
 			CleanUp();
 			Init();
+			obstacles.InitObstacles(platform_, world_, static_cast<int>(difficulty_state_));
 			audio_manager_->LoadMusic("audio/music/runboy.wav", platform_);
 			audio_manager_->PlayMusic();
 			score = 0;
@@ -583,6 +581,7 @@ void SceneApp::EndUpdate(float frame_time)
 		case GAMEMUSICCHOICE::MIAMI:
 			CleanUp();
 			Init();
+			obstacles.InitObstacles(platform_, world_, static_cast<int>(difficulty_state_));
 			audio_manager_->LoadMusic("audio/music/miami.wav", platform_);
 			audio_manager_->PlayMusic();
 			score = 0;
@@ -602,8 +601,10 @@ void SceneApp::EndUpdate(float frame_time)
 		game_state_ = GAMESTATE::INIT;
 	}
 
-
+	zombies.update(frame_time);
 	UpdateSimulation(frame_time);
+
+
 
 	//if (playerskinned)
 	//{
@@ -618,15 +619,9 @@ void SceneApp::EndUpdate(float frame_time)
 }
 void SceneApp::EndRender()
 {
-	gef::Vector4 playerPosition(0.0, 0.0, -200.0f);
-	//endplayerpos.SetIdentity();
-	//endplayerpos.SetTranslation(playerPosition);
-	//playerskinned->set_transform(endplayerpos);
-
-	//camera_eye_V4 = gef::Vector4(0.0f, 0.0f, 300.0f);
-	//player_body_->SetTransform(b2Vec2(0.0, 0.0), 0);
-	//camera_lookat_V4 = gef::Vector4(0, 0, 0.0f);
-	//camera_up_V4 = gef::Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+	camera_eye_V4 = gef::Vector4(0.0f, 5.0f, 15.0f);
+	camera_lookat_V4 = gef::Vector4(0.0f, 0.0f, 0.0f);
+	camera_up_V4 = gef::Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 
 	gef::Matrix44 projection_matrix;
 	gef::Matrix44 view_matrix;
@@ -637,6 +632,8 @@ void SceneApp::EndRender()
 
 	renderer_3d_->Begin();
 
+	renderer_3d_->DrawMesh(background_Mesh_Instance);
+	roads.Render(renderer_3d_);
 	zombies.Render(renderer_3d_);
 
 	renderer_3d_->End();
