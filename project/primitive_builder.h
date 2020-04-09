@@ -1,3 +1,7 @@
+																		///////////////////////////////////////////
+																		//      CODE PROVIDED FOR CMP208         //
+																		///////////////////////////////////////////
+
 #ifndef _PRIMITIVE_BUILDER_H
 #define _PRIMITIVE_BUILDER_H
 

@@ -1,8 +1,12 @@
+																		///////////////////////////////////////////
+																		// CODE CREATED BY JAMIE HADDOW 0705082  //
+																		//				COMMENTED                //
+																		///////////////////////////////////////////
+
 #include "scene_app.h"
 #include <system/platform.h>
 #include <graphics/sprite_renderer.h>
 #include <graphics/font.h>
-#include <system/debug_log.h>
 #include <graphics/renderer_3d.h>
 #include <graphics/mesh.h>
 #include <maths/math_utils.h>
@@ -17,9 +21,6 @@
 #include <time.h>  
 #include "load_texture.h"
 
-
-
-
 SceneApp::SceneApp(gef::Platform& platform) :
 	Application(platform)
 	, sprite_renderer_(NULL)
@@ -32,6 +33,7 @@ SceneApp::SceneApp(gef::Platform& platform) :
 {
 }
 
+//initialize all the enums, poiner objects and calling the gameinit function
 void SceneApp::Init()
 {
 	game_state_ = GAMESTATE::SPLASH;
@@ -52,12 +54,25 @@ void SceneApp::Init()
 	GameInit();
 
 }
-
+//initalizing the audio samples,lights,camera and calling the init functions on player,roads,buildings.
+//obstacles are not set here due to it depending on the difficulty that can change in options
 void SceneApp::GameInit()
 {
+	b2Vec2 gravity(0.0f, -9.81f);
+	world_ = new b2World(gravity);
+
 	EndInit();
 	InitFont();
 	InitBackgroundImages();
+	InitGround();
+	SetupLights();
+	SetupCamera();
+
+	player.InitPlayer(world_, platform_);
+	buildings.InitBuildings(platform_);
+	roads.InitRoad(platform_);
+	zombies.InitZombies(platform_);
+	
 	audio_manager_->PlayMusic();
 	audio_manager_->LoadSample("audio/soundeffects/menu/select1.wav", platform_);//0
 	audio_manager_->LoadSample("audio/soundeffects/good/bravo.wav", platform_);//1
@@ -71,26 +86,18 @@ void SceneApp::GameInit()
 	audio_manager_->LoadSample("audio/soundeffects/bad/boo1.wav", platform_);//9
 	audio_manager_->LoadSample("audio/soundeffects/bad/boo2.wav", platform_);//10
 	audio_manager_->LoadSample("audio/soundeffects/bad/boo3.wav", platform_);//11
-
+	//volume level is dependant on the enum state
 	audio_manager_->SetMasterVolume(volumelevel.at(static_cast<int>(volume_state_)));
 	srand(time(NULL));
-	b2Vec2 gravity(0.0f, -9.81f);
-	world_ = new b2World(gravity);
+
 	score = 0;
 	boocounter = 30;
-	player.InitPlayer(world_, platform_);
-	InitGround();
-	buildings.InitBuildings(platform_);
-	roads.InitRoad(platform_);
-	zombies.InitZombies(world_, platform_);
-	//obstacles.InitObstacles(platform_, world_, static_cast<int>(difficulty_state_));
-	SetupLights();
-	SetupCamera();
+
 
 }
 void SceneApp::InitGround()
 {
-	// ground dimensions
+	//ground dimensions
 	gef::Vector4 ground_half_dimensions(1000.0f, 0.1f, 50.0f);
 	b2Vec2 ground_start_position(990.0f, -0.77f);
 	// setup the mesh for the ground
@@ -118,18 +125,13 @@ void SceneApp::InitGround()
 
 	// update visuals from simulation data
 	ground_.UpdateFromSimulation(ground_body_);
-
-
-
 }
-
 void SceneApp::InitFont()
 {
 	font_ = new gef::Font(platform_);
 	font_->Load("Bubblegum.ttf");
 	
 }
-
 void SceneApp::InitBackgroundImages()
 {
 	splash_screen__texture_ = CreateTextureFromPNG("images/splash.png", platform_);
@@ -140,17 +142,18 @@ void SceneApp::InitBackgroundImages()
 	splash_background_.set_position(gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.5f, -0.99f));
 	splash_background_.set_height(960.0f);
 	splash_background_.set_width(1280.0f);
+
 	main_menu_background_.set_texture(menu_texture_);
 	main_menu_background_.set_position(gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.5f, -0.99f));
 	main_menu_background_.set_height(960.0f);
 	main_menu_background_.set_width(1280.0f);
+
 	options_background_.set_texture(options_texture_);
 	options_background_.set_position(gef::Vector4(platform_.width() * 0.5f, platform_.height() * 0.5f, -0.99f));
 	options_background_.set_height(960.0f);
 	options_background_.set_width(1280.0f);
 	
 }
-
 
 bool SceneApp::Update(float frame_time)
 {
@@ -213,7 +216,6 @@ void SceneApp::Render()
 	}
 }
 
-
 void SceneApp::SplashUpdate(float frame_time)
 {
 	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_RETURN))
@@ -221,7 +223,6 @@ void SceneApp::SplashUpdate(float frame_time)
 		game_state_ = GAMESTATE::INIT;
 	}
 }
-
 void SceneApp::SplashRender()
 {
 	sprite_renderer_->Begin();
@@ -232,31 +233,15 @@ void SceneApp::SplashRender()
 	sprite_renderer_->End();
 }
 
-
-void SceneApp::FrontendInit()
-{
-
-	//const char* start_model_asset = "start/startmodel.scn";
-	//start_model = LoadSceneAssets(platform_, start_model_asset);
-	//startmodelM44.SetIdentity();
-	//startmodel.set_mesh(GetMeshFromSceneAssets(start_model));
-	//startmodelV4 = gef::Vector4(0, 0, 0, 0);
-	//startmodelM44.SetTranslation(startmodelV4);
-	//startmodel.set_transform(startmodelM44);
-
-
-}
+//obstacles init is called in this function
 void SceneApp::FrontendUpdate(float frame_time)
 {
-
-
 
 	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_DOWN))
 	{
 		audio_manager_->PlaySample(0);
 		current_start_menu_choice_ = SceneApp::STARTMENUCHOICE((static_cast<int>( current_start_menu_choice_) + 1) % START_MENU_CHOICES);
 	}
-
 
 	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_UP))
 	{
@@ -328,7 +313,6 @@ void SceneApp::FrontendRender()
 
 	sprite_renderer_->End();
 }
-
 
 void SceneApp::OptionsUpdate(float frame_time)
 {
@@ -450,8 +434,6 @@ void SceneApp::OptionsRender()
 	sprite_renderer_->End();
 }
 
-
-
 void SceneApp::GameUpdate(float frame_time)
 {
 	fps_ = 1.0f / frame_time;
@@ -516,11 +498,7 @@ void SceneApp::GameUpdate(float frame_time)
 	{
 		score = 0;
 	}
-
-
-
 	
-
 	UpdateSimulation(frame_time);
 
 	
@@ -552,7 +530,7 @@ void SceneApp::GameRender()
 	DrawHUD();
 	sprite_renderer_->End();
 }
-
+//obstacles init is called in this function
 void SceneApp::EndUpdate(float frame_time)
 {
 	if (input_manager_->keyboard()->IsKeyPressed(gef::Keyboard::KC_RETURN))
@@ -668,14 +646,11 @@ void SceneApp::EndRender()
 
 
 }
-
 void SceneApp::EndInit()
 {
 	bool endmusicplaying_ = false;
 
 }
-
-
 
 void SceneApp::DrawHUD()
 {
@@ -786,46 +761,6 @@ void SceneApp::UpdateSimulation(float frame_time)
 	//	contact = contact->GetNext();
 	//}
 }
-void SceneApp::CameraRotateAroundObject(float rotate)
-{
-	gef::Vector4 offset = camera_lookat_V4 - camera_eye_V4;
-	camera_eye_transformM44.RotationY(rotate);
-	offset = offset.Transform(camera_eye_transformM44);
-	//camera_eye_rotateV4.Transform(camera_eye_transformM44);
-	camera_eye_V4 = camera_lookat_V4 - offset;
-}
-
-gef::Mesh* SceneApp::GetMeshFromSceneAssets(gef::Scene* scene)
-{
-	gef::Mesh* mesh = NULL;
-
-	// if the scene data contains at least one mesh
-	// return the first mesh
-	if (scene && scene->meshes.size() > 0)
-		mesh = scene->meshes.front();
-
-	return mesh;
-}
-
-gef::Scene* SceneApp::LoadSceneAssets(gef::Platform& platform, const char* filename)
-{
-	gef::Scene* scene = new gef::Scene();
-
-	if (scene->ReadSceneFromFile(platform, filename))
-	{
-		// if scene file loads successful
-		// create material and mesh resources from the scene data
-		scene->CreateMaterials(platform);
-		scene->CreateMeshes(platform);
-	}
-	else
-	{
-		delete scene;
-		scene = NULL;
-	}
-
-	return scene;
-}
 void SceneApp::CleanUp()
 {
 	// destroying the physics world also destroys all the objects within it
@@ -863,4 +798,35 @@ void SceneApp::CleanUpFont()
 {
 	delete font_;
 	font_ = NULL;
+}
+
+gef::Mesh* SceneApp::GetMeshFromSceneAssets(gef::Scene* scene)
+{
+	gef::Mesh* mesh = NULL;
+
+	// if the scene data contains at least one mesh
+	// return the first mesh
+	if (scene && scene->meshes.size() > 0)
+		mesh = scene->meshes.front();
+
+	return mesh;
+}
+gef::Scene* SceneApp::LoadSceneAssets(gef::Platform& platform, const char* filename)
+{
+	gef::Scene* scene = new gef::Scene();
+
+	if (scene->ReadSceneFromFile(platform, filename))
+	{
+		// if scene file loads successful
+		// create material and mesh resources from the scene data
+		scene->CreateMaterials(platform);
+		scene->CreateMeshes(platform);
+	}
+	else
+	{
+		delete scene;
+		scene = NULL;
+	}
+
+	return scene;
 }

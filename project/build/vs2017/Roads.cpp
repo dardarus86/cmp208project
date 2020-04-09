@@ -1,70 +1,55 @@
+																		///////////////////////////////////////////
+																		// CODE CREATED BY JAMIE HADDOW 0705082  //
+																		//				COMMENTED                //
+																		///////////////////////////////////////////
+
 #include "Roads.h"
-#include "scene_app.h"
 #include <system/platform.h>
-#include <graphics/sprite_renderer.h>
-#include <graphics/font.h>
-#include <system/debug_log.h>
 #include <graphics/renderer_3d.h>
 #include <graphics/mesh.h>
-#include <maths/math_utils.h>
-#include <input/sony_controller_input_manager.h>
-#include <input/input_manager.h>
-#include <input/keyboard.h>
 #include <graphics/scene.h>
-#include <animation/skeleton.h>
-#include <animation/animation.h>
-#include <stdlib.h>
-#include <time.h>  
+
+//init funcction for spawning the roads
 void Roads::InitRoad(gef::Platform& platform)
 {	
-	//20 roads
 	military_Road_Distance_Counter = 0;
-	//20roads
 	samurai_Road_Distance_Counter = 400;
-	//20 roads
 	apoc_Road_Distance_Counter = 800;
 	
-	//random number for picking road elements at random out of 5 choices
+	const char* samurairoad_asset[5] = {
+	"samurai/road/road1.scn",
+	"samurai/road/road2.scn",
+	"samurai/road/road3.scn",
+	"samurai/road/road4.scn",
+	"samurai/road/road5.scn"
+	};
+
+	const char* miliroad_asset[5] = {
+	"military/road/road1.scn",
+	"military/road/road2.scn",
+	"military/road/road3.scn",
+	"military/road/road4.scn",
+	"military/road/road5.scn"
+	};
+
+	const char* apocroad_asset[5] = {
+	"apoc/road/road1.scn",
+	"apoc/road/road2.scn",
+	"apoc/road/road3.scn",
+	"apoc/road/road4.scn",
+	"apoc/road/road5.scn"
+	};
 	
-	
-	
-	const char* samurairoad_asset1 = "samurai/road/road1.scn";
-	const char* samurairoad_asset2 = "samurai/road/road2.scn";
-	const char* samurairoad_asset3 = "samurai/road/road3.scn";
-	const char* samurairoad_asset4 = "samurai/road/road4.scn";
-	const char* samurairoad_asset5 = "samurai/road/road5.scn";
-	const char* miliroad_asset1 = "military/road/road1.scn";
-	const char* miliroad_asset2 = "military/road/road2.scn";
-	const char* miliroad_asset3 = "military/road/road3.scn";
-	const char* miliroad_asset4 = "military/road/road4.scn";
-	const char* miliroad_asset5 = "military/road/road5.scn";
-	const char* apocroad_asset1 = "apoc/road/road1.scn";
-	const char* apocroad_asset2 = "apoc/road/road2.scn";
-	const char* apocroad_asset3 = "apoc/road/road3.scn";
-	const char* apocroad_asset4 = "apoc/road/road4.scn";
-	const char* apocroad_asset5 = "apoc/road/road5.scn";
-	
-	//military
-	military_Roads[0] = LoadSceneAssets(platform, miliroad_asset1);
-	military_Roads[1] = LoadSceneAssets(platform, miliroad_asset2);
-	military_Roads[2] = LoadSceneAssets(platform, miliroad_asset3);
-	military_Roads[3] = LoadSceneAssets(platform, miliroad_asset4);
-	military_Roads[4] = LoadSceneAssets(platform, miliroad_asset5);
-	samurai_Roads[0] = LoadSceneAssets(platform, samurairoad_asset1);
-	samurai_Roads[1] = LoadSceneAssets(platform, samurairoad_asset2);
-	samurai_Roads[2] = LoadSceneAssets(platform, samurairoad_asset3);
-	samurai_Roads[3] = LoadSceneAssets(platform, samurairoad_asset4);
-	samurai_Roads[4] = LoadSceneAssets(platform, samurairoad_asset5);
-	apoc_Roads[0] = LoadSceneAssets(platform, apocroad_asset1);
-	apoc_Roads[1] = LoadSceneAssets(platform, apocroad_asset2);
-	apoc_Roads[2] = LoadSceneAssets(platform, apocroad_asset3);
-	apoc_Roads[3] = LoadSceneAssets(platform, apocroad_asset4);
-	apoc_Roads[4] = LoadSceneAssets(platform, apocroad_asset5);
-	
-	
+	for (int i = 0; i < 5; i++)
+	{
+		military_Roads[i] = LoadSceneAssets(platform, miliroad_asset[i]);
+		samurai_Roads[i] = LoadSceneAssets(platform, samurairoad_asset[i]);
+		apoc_Roads[i] = LoadSceneAssets(platform, apocroad_asset[i]);
+	}
 	
 	for (int i = 0; i < 20; i++)
 	{
+		//random number for deciding which array model to use
 		int road_Random_Number = rand() % 4;
 		military_Road_Mesh_Instance_M44[i].SetIdentity();
 		samurai_Road_Mesh_Instance_M44[i].SetIdentity();
@@ -92,6 +77,7 @@ void Roads::InitRoad(gef::Platform& platform)
 	}
 }
 
+//becuase the roads are pointer objects, cleanup is needed. this also means the init function need to be recalled if the user restarts the game
 void Roads::Cleanup()
 {
 	for (int i = 0; i < 5; i++)
@@ -105,6 +91,7 @@ void Roads::Cleanup()
 	}
 }
 
+//rendering 20 road assets
 void Roads::Render(gef::Renderer3D* renderer)
 {
 	for (int i = 0; i < 20; i++)
@@ -113,7 +100,6 @@ void Roads::Render(gef::Renderer3D* renderer)
 		renderer->DrawMesh(samurai_road_mesh_instance[i]);
 		renderer->DrawMesh(apoc_road_mesh_instance[i]);
 	}
-
 }
 
 gef::Scene* Roads::LoadSceneAssets(gef::Platform& platform, const char* filename)

@@ -1,20 +1,23 @@
-#include "scene_app.h"
+																		///////////////////////////////////////////
+																		// CODE CREATED BY JAMIE HADDOW 0705082  //
+																		//				COMMENTED                //
+																		///////////////////////////////////////////
+
 #include <system/platform.h>
 #include <graphics/renderer_3d.h>
-#include <maths/math_utils.h>
 #include <graphics/scene.h>
 #include <stdlib.h>
 #include <time.h> 
-
 #include "Obstacles.h"
-
 
 void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int difficultysstate)
 {
+	// the first obstacle starts at 30 but then for samurai and apoc starts at he beginning of the area
 	military_obstacle_distance_counter = 30;
 	samurai_obstacle_distance_counter = 400;
 	apoc_obstacle_distance_counter = 800;
 
+	//taking the obstacle scns created using the model loader provided and manually edited in maya for positions
 	const char* samurai_obstacle_asset[4] = {
 	"samurai/obstacles/small.scn",
 	"samurai/obstacles/large.scn",
@@ -45,8 +48,10 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		apoc_obstacle[i] = LoadSceneAssets(platform, apoc_obstacle_asset[i]);
 	}
 
+	
 	for (int i = 0, total_distance = 0; ; i++)
 	{
+		//two random numbers used in the code below. Random number decides which obstacle model to use,  distance number decides the spacing of the obstacles
 		int obstacle_Random_Number = rand() % 4;
 		int obstacle_Random_Distance = rand() % 10 + game_obstacle_distance.at(difficultysstate);
 		total_distance += obstacle_Random_Distance;
@@ -61,6 +66,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		{
 			obstacle_height = 0;
 		}
+		//setting the meshs,vectors/matrixes for transforma nd the B2Body parameters
 		apoc_obstacle_mesh_instance[i].set_mesh(GetMeshFromSceneAssets(apoc_obstacle[obstacle_Random_Number]));
 		apoc_obstacle_mesh_instance_M44[i].SetIdentity();
 		apoc_obstacle_mesh_instance_V4[i] = gef::Vector4(apoc_obstacle_distance_counter, obstacle_height, 0, 0);
@@ -76,6 +82,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		apoc_obstacle_distance_counter = apoc_obstacle_distance_counter + obstacle_Random_Distance;
 
 	}
+	// same as previous for loop
 	for (int i = 0, total_distance = 0; ; i++)
 	{
 		int obstacle_Random_Number = rand() % 4;
@@ -115,6 +122,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 
 
 	}
+	// same as previous for loop
 	for (int i = 0, total_distance = 0; ; i++)
 	{
 		int obstacle_Random_Number = rand() % 4;
@@ -148,6 +156,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 	}
 }
 
+//render function that iterates through the obstacle mesh instances
 void Obstacles::Render(gef::Renderer3D* renderer, int difficultysstate)
 {
 	for (int i = 0; i < game_objects_to_render.at(difficultysstate); i++)

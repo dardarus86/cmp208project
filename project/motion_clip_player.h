@@ -1,3 +1,10 @@
+																		///////////////////////////////////////////
+																		//      CODE PROVIDED FOR CMP208         //
+																		///////////////////////////////////////////
+
+
+
+
 #ifndef _MOTION_CLIP_PLAYER_H
 #define _MOTION_CLIP_PLAYER_H
 

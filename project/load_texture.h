@@ -1,3 +1,11 @@
+																		///////////////////////////////////////////
+																		//       CODE PROVIDED FOR CMP208        //
+																		///////////////////////////////////////////
+
+
+
+
+
 #ifndef _LOAD_TEXTURE_H
 #define _LOAD_TEXTURE_H
 

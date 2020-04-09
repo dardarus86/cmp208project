@@ -1,3 +1,9 @@
+																		///////////////////////////////////////////
+																		// CODE CREATED BY JAMIE HADDOW 0705082  //
+																		//				COMMENTED                //
+																		///////////////////////////////////////////
+
+
 #include <system/platform.h>
 #include <graphics/renderer_3d.h>
 #include <graphics/mesh.h>
@@ -7,21 +13,17 @@
 #include <animation/skeleton.h>
 #include <animation/animation.h>
 #include <stdlib.h>
-#include <system/debug_log.h>
 #include "Player.h"
 
 void Player::InitPlayer(b2World* world, gef::Platform& platform)
 {
+	//creating the player model and animation
 	ninja = new gef::Scene();
 	playerscalingV4 = gef::Vector4{ 0.01f,0.01f,0.01f,0 };
-
 	player_scaleM44.Scale(playerscalingV4);
-
 	ninja->ReadSceneFromFile(platform, "player/ninja.scn");
 	ninja->CreateMaterials(platform);
-
 	player_mesh_ = GetFirstMesh(ninja, platform);
-
 	gef::Skeleton* skeleton = GetFirstSkeleton(ninja);
 
 	if (skeleton)
@@ -61,9 +63,6 @@ void Player::InitPlayer(b2World* world, gef::Platform& platform)
 	// create the fixture on the rigid body
 	player_body_->CreateFixture(&player_fixture_def);
 
-	// update visuals from simulation data
-	//player_.UpdateFromSimulation(player_body_);
-	//vel = player_body_->GetLinearVelocity();
 	// create a connection between the rigid body and GameObject
 	player_body_->SetUserData(&playerskinned);
 	
@@ -73,6 +72,7 @@ void Player::Render(gef::Renderer3D* renderer)
 {
 	renderer->DrawSkinnedMesh(*playerskinned, playerskinned->bone_matrices());
 }
+
 void Player::update(float frame_time, int* score, gef::InputManager* inputmanager)
 {
 	counter--;
@@ -82,6 +82,7 @@ void Player::update(float frame_time, int* score, gef::InputManager* inputmanage
 		SetGoalFinished(true);
 	}
 
+	//translate the player model to the position of the b2body
 	gef::Vector4 playerPosition(player_body_->GetPosition().x, player_body_->GetPosition().y, 0.0f);
 
 	player_rotateM44.RotationY(gef::DegToRad(90.0f));
@@ -96,11 +97,13 @@ void Player::update(float frame_time, int* score, gef::InputManager* inputmanage
 		player_body_->ApplyForce(b2Vec2(5.0f, 0.0f), b2Vec2(player_body_->GetPosition().x, player_body_->GetPosition().y), true);
 	}
 
+	//sliding
 	if (inputmanager->keyboard()->IsKeyDown(gef::Keyboard::KC_S))
 	{
 
 		if (issliding_)
 		{
+			//needed toget the playerbodys shape and then updating the shapes box size
 			fixturelistplayer = player_body_->GetFixtureList();
 			b2Shape* shape = fixturelistplayer->GetShape();
 			b2PolygonShape* polygon = dynamic_cast<b2PolygonShape*>(shape);
@@ -137,18 +140,20 @@ void Player::update(float frame_time, int* score, gef::InputManager* inputmanage
 		playerskinned->set_transform(combined3);
 	}
 
-
+	//jumping
 	if (inputmanager->keyboard()->IsKeyDown(gef::Keyboard::KC_W) && counter <= 0)
 	{
 		counter = 70;
 		player_body_->ApplyLinearImpulse(b2Vec2(0.0f, 5.0f), b2Vec2(player_body_->GetPosition().x, player_body_->GetPosition().y), true);
 	}
 
+	//jumping up animation
 	if (player_body_->GetLinearVelocity().y > 0.05)
 	{
 		anim_player_.set_clip(up_anim_);
 		anim_player_.set_looping(false);
 	}
+	//falling animation
 	else if (player_body_->GetLinearVelocity().y < -0.02)
 	{
 		anim_player_.set_clip(down_anim_);
@@ -157,7 +162,7 @@ void Player::update(float frame_time, int* score, gef::InputManager* inputmanage
 		player_body_->ApplyForce(b2Vec2(2.0f, 0.2f), b2Vec2(player_body_->GetPosition().x, player_body_->GetPosition().y), true);
 	}
 
-
+	//this was needed to fix an issue of the player standing up whilst under an obstacles making body go down on the y axis so he can walk under every obstacle in the air
 	if (player_body_->GetLinearVelocity().y < 0.02 && player_body_->GetLinearVelocity().y > -0.02)
 	{
 		if (!issliding_)
@@ -182,8 +187,6 @@ void Player::update(float frame_time, int* score, gef::InputManager* inputmanage
 	{
 		counter = 0;
 	}
-
-	gef::DebugOut("Player: %0.1f %0.1f %0.1f %0.01f\n", player_body_->GetPosition().x, player_body_->GetPosition().y, player_body_->GetLinearVelocity().x, player_body_->GetLinearVelocity().y);
 }
 
 
@@ -195,10 +198,6 @@ bool Player::GetGoalFinished()
 {
 	return goalreached_;
 }
-void Player::ReduceScore(int score)
-{
-	score = -5;
-}
 float Player::GetPlayerBodyX()
 {
 	return player_body_->GetPosition().x;
@@ -207,10 +206,13 @@ float Player::GetPlayerBodyY()
 {
 	return player_body_->GetPosition().y;
 }
-
 float Player::GetPlayerBodyXVecolity()
 {
 	return player_body_->GetLinearVelocity().x;
+}
+void Player::ReduceScore(int score)
+{
+	score = -5;
 }
 
 gef::Skeleton* Player::GetFirstSkeleton(gef::Scene* scene)
@@ -240,7 +242,6 @@ gef::Mesh* Player::GetFirstMesh(gef::Scene* scene, gef::Platform& platform)
 
 	return mesh;
 }
-
 gef::Animation* Player::LoadAnimation(const char* anim_scene_filename, const char* anim_name, gef::Platform& platform)
 {
 	gef::Animation* anim = NULL;
@@ -262,7 +263,6 @@ gef::Animation* Player::LoadAnimation(const char* anim_scene_filename, const cha
 
 	return anim;
 }
-
 gef::Scene* Player::LoadSceneAssets(gef::Platform& platform, const char* filename)
 {
 	gef::Scene* scene = new gef::Scene();
@@ -282,7 +282,6 @@ gef::Scene* Player::LoadSceneAssets(gef::Platform& platform, const char* filenam
 
 	return scene;
 }
-
 gef::Mesh* Player::GetMeshFromSceneAssets(gef::Scene* scene)
 {
 	gef::Mesh* mesh = NULL;

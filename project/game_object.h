@@ -1,3 +1,8 @@
+																		///////////////////////////////////////////
+																		//       CODE PROVIDED FOR CMP208        //
+																		///////////////////////////////////////////
+
+
 #ifndef _GAME_OBJECT_H
 #define _GAME_OBJECT_H
 
@@ -23,6 +28,8 @@ private:
 	OBJECT_TYPE type_;
 };
 
+
+//this class was not used in this game however i left it in for potential future use
 //class Player : public GameObject
 //{
 //public:

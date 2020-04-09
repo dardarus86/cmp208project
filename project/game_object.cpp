@@ -1,3 +1,7 @@
+																		///////////////////////////////////////////
+																		//       CODE PROVIDED FOR CMP208        //
+																		///////////////////////////////////////////
+
 #include "game_object.h"
 #include <system/debug_log.h>
 

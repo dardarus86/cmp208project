@@ -1,5 +1,8 @@
-#include "load_texture.h"
+																		///////////////////////////////////////////
+																		//       CODE PROVIDED FOR CMP208        //
+																		///////////////////////////////////////////
 
+#include "load_texture.h"
 #include <assets/png_loader.h>
 #include <graphics/image_data.h>
 #include <graphics/texture.h>

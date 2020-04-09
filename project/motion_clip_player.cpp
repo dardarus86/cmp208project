@@ -1,3 +1,8 @@
+																		///////////////////////////////////////////
+																		//       CODE PROVIDED FOR CMP208        //
+																		///////////////////////////////////////////
+
+
 #include "motion_clip_player.h"
 #include <animation/animation.h>
 #include <system/debug_log.h>

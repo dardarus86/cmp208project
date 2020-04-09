@@ -1,19 +1,20 @@
+																		///////////////////////////////////////////
+																		// CODE CREATED BY JAMIE HADDOW 0705082  //
+																		//				COMMENTED                //
+																		///////////////////////////////////////////
+
 #include <system/platform.h>
 #include <graphics/renderer_3d.h>
 #include <graphics/mesh.h>
-#include <maths/math_utils.h>
-#include <input/keyboard.h>
 #include <graphics/scene.h>
 #include <animation/skeleton.h>
 #include <animation/animation.h>
-#include <stdlib.h>
-#include <system/debug_log.h>
 #include "Zombies.h"
 
-void Zombies::InitZombies(b2World* world, gef::Platform& platform)
+void Zombies::InitZombies(gef::Platform& platform)
 {
+	//zombie model is too large so necessary to scale it down
 	zombie_scale_V4 = gef::Vector4{ 0.01f,0.01f,0.01f,0 };
-
 	zombie_scaleM44.Scale(zombie_scale_V4);
 
 	zombie_chrisT_scene_1 = new gef::Scene();
@@ -30,10 +31,7 @@ void Zombies::InitZombies(b2World* world, gef::Platform& platform)
 	zombie_paul_translate_1.SetIdentity();
 	zombie_paul_translate_2.SetIdentity();
 	zombie_rotateM44.SetIdentity();
-
-
-
-
+	   	  
 	zombie_chrisT_scene_1->ReadSceneFromFile(platform, "zombies/paul.scn");
 	zombie_chrisT_scene_2->ReadSceneFromFile(platform, "zombies/paul.scn");
 	zombie_chrisA_scene_1->ReadSceneFromFile(platform, "zombies/paul.scn");
@@ -124,29 +122,27 @@ void Zombies::InitZombies(b2World* world, gef::Platform& platform)
 	chrisA_dance_anim_ = LoadAnimation("zombies/chrisAdance.scn", "", platform);
 	paul_dance_anim_ = LoadAnimation("zombies/pauldance.scn", "", platform);
 
-	if (chrisT_dance_anim_)
-	{
-		zombie_chrisT_anim_player_1_.set_clip(chrisT_dance_anim_);
-		zombie_chrisT_anim_player_2_.set_clip(chrisT_dance_anim_);
-		zombie_chrisA_anim_player_1_.set_clip(chrisA_dance_anim_);
-		zombie_chrisA_anim_player_2_.set_clip(chrisA_dance_anim_);
-		zombie_paul_anim_player_1_.set_clip(paul_dance_anim_);
-		zombie_paul_anim_player_2_.set_clip(paul_dance_anim_);
+	zombie_chrisT_anim_player_1_.set_clip(chrisT_dance_anim_);
+	zombie_chrisT_anim_player_2_.set_clip(chrisT_dance_anim_);
+	zombie_chrisA_anim_player_1_.set_clip(chrisA_dance_anim_);
+	zombie_chrisA_anim_player_2_.set_clip(chrisA_dance_anim_);
+	zombie_paul_anim_player_1_.set_clip(paul_dance_anim_);
+	zombie_paul_anim_player_2_.set_clip(paul_dance_anim_);
 
-		zombie_chrisT_anim_player_1_.set_looping(true);
-		zombie_chrisT_anim_player_2_.set_looping(true);
-		zombie_chrisA_anim_player_1_.set_looping(true);
-		zombie_chrisA_anim_player_2_.set_looping(true);
-		zombie_paul_anim_player_1_.set_looping(true);
-		zombie_paul_anim_player_2_.set_looping(true);
+	zombie_chrisT_anim_player_1_.set_looping(true);
+	zombie_chrisT_anim_player_2_.set_looping(true);
+	zombie_chrisA_anim_player_1_.set_looping(true);
+	zombie_chrisA_anim_player_2_.set_looping(true);
+	zombie_paul_anim_player_1_.set_looping(true);
+	zombie_paul_anim_player_2_.set_looping(true);
 
-		zombie_chrisT_anim_player_1_.set_anim_time(0.0f);
-		zombie_chrisT_anim_player_2_.set_anim_time(0.0f);
-		zombie_chrisA_anim_player_1_.set_anim_time(0.0f);
-		zombie_chrisA_anim_player_2_.set_anim_time(0.0f);
-		zombie_paul_anim_player_1_.set_anim_time(0.0f);
-		zombie_paul_anim_player_2_.set_anim_time(0.0f);
-	}
+	zombie_chrisT_anim_player_1_.set_anim_time(0.0f);
+	zombie_chrisT_anim_player_2_.set_anim_time(0.0f);
+	zombie_chrisA_anim_player_1_.set_anim_time(0.0f);
+	zombie_chrisA_anim_player_2_.set_anim_time(0.0f);
+	zombie_paul_anim_player_1_.set_anim_time(0.0f);
+	zombie_paul_anim_player_2_.set_anim_time(0.0f);
+
 }
 
 void Zombies::Render(gef::Renderer3D* renderer)
@@ -193,8 +189,6 @@ void Zombies::update(float frame_time)
 		zombie_paul_player_skinned_2->UpdateBoneMatrices(zombie_paul_anim_player_2_.pose());
 	}
 
-
-
 }
 
 gef::Skeleton* Zombies::GetFirstSkeleton(gef::Scene* scene)
@@ -211,7 +205,6 @@ gef::Skeleton* Zombies::GetFirstSkeleton(gef::Scene* scene)
 
 	return skeleton;
 }
-
 gef::Mesh* Zombies::GetFirstMesh(gef::Scene* scene, gef::Platform& platform)
 {
 	gef::Mesh* mesh = NULL;
@@ -225,7 +218,6 @@ gef::Mesh* Zombies::GetFirstMesh(gef::Scene* scene, gef::Platform& platform)
 
 	return mesh;
 }
-
 gef::Animation* Zombies::LoadAnimation(const char* anim_scene_filename, const char* anim_name, gef::Platform& platform)
 {
 	gef::Animation* anim = NULL;
@@ -247,7 +239,6 @@ gef::Animation* Zombies::LoadAnimation(const char* anim_scene_filename, const ch
 
 	return anim;
 }
-
 gef::Scene* Zombies::LoadSceneAssets(gef::Platform& platform, const char* filename)
 {
 	gef::Scene* scene = new gef::Scene();
@@ -267,7 +258,6 @@ gef::Scene* Zombies::LoadSceneAssets(gef::Platform& platform, const char* filena
 
 	return scene;
 }
-
 gef::Mesh* Zombies::GetMeshFromSceneAssets(gef::Scene* scene)
 {
 	gef::Mesh* mesh = NULL;

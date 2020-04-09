@@ -1,3 +1,7 @@
+																		///////////////////////////////////////////
+																		//       CODE PROVIDED FOR CMP208        //
+																		///////////////////////////////////////////
+
 #include "primitive_builder.h"
 #include <graphics/mesh.h>
 #include <system/platform.h>
