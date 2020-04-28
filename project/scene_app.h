@@ -55,6 +55,7 @@ public:
 	enum class GAMEDIFFICULTY { DIFF_EASY = 0, DIFF_MEDIUM, DIFF_HARD };
 	enum class VOLUMELEVEL { VOL_OFF = 0, VOL_LOW, VOL_MEDIUM, VOL_HIGH, VOL_FULL };
 	enum class CameraOptions { Behind = 0, Deg_45, Side };
+	
 
 	SceneApp(gef::Platform& platform);
 	//basic game state functions for the game

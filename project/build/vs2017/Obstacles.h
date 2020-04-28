@@ -11,6 +11,7 @@
 #include <graphics/mesh_instance.h>
 #include <box2d/Box2D.h>
 #include "Obstacles.h"
+#include "Collision.h"
 
 
 #define NUMBER_OF_OBSTACLE_MESH_INSTANCE 25
@@ -24,7 +25,7 @@ namespace gef
 
 }
 
-class Obstacles
+class Obstacles : public collision
 {
 public:
 

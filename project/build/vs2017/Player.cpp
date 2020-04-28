@@ -62,7 +62,8 @@ void Player::InitPlayer(b2World* world, gef::Platform& platform)
 
 	// create the fixture on the rigid body
 	player_body_->CreateFixture(&player_fixture_def);
-
+	set_type(PLAYER);
+	
 	// create a connection between the rigid body and GameObject
 	player_body_->SetUserData(&playerskinned);
 	

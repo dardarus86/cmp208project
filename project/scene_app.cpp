@@ -5,6 +5,7 @@
 
 #include "scene_app.h"
 #include <system/platform.h>
+#include <system/debug_log.h>
 #include <graphics/sprite_renderer.h>
 #include <graphics/font.h>
 #include <graphics/renderer_3d.h>
@@ -42,6 +43,8 @@ void SceneApp::Init()
 	current_start_menu_choice_ = STARTMENUCHOICE::START;
 	current_option_menu_choice_ = OPTIONMENUCHOICE::VOLUME;
 	camera_state_ = CameraOptions::Behind;
+	//player.set_type(PLAYER);
+	//obstacles.set_type(OBSTACLE);
 	textcolors[0] = 0xffffffff;
 	textcolors[1] = 0xff0000dd;
 	textcolors[2] = 0xffabcdef;
@@ -718,48 +721,57 @@ void SceneApp::UpdateSimulation(float frame_time)
 	// get contact count
 	int contact_count = world_->GetContactCount();
 
-	//for (int contact_num = 0; contact_num < contact_count; ++contact_num)
-	//{
-	//	if (contact->IsTouching())
-	//	{
-	//		// get the colliding bodies
-	//		b2Body* bodyA = contact->GetFixtureA()->GetBody();
-	//		b2Body* bodyB = contact->GetFixtureB()->GetBody();
+	for (int contact_num = 0; contact_num < contact_count; ++contact_num)
+	{
+		if (contact->IsTouching())
+		{
+			// get the colliding bodies
+			b2Body* bodyA = contact->GetFixtureA()->GetBody();
+			b2Body* bodyB = contact->GetFixtureB()->GetBody();
 
-	//		// DO COLLISION RESPONSE HERE
-	//		Player* player = NULL;
+			// DO COLLISION RESPONSE HERE
+			Player* playerA = NULL;
 
-	//		GameObject* gameObjectA = NULL;
-	//		GameObject* gameObjectB = NULL;
+			collision* collisionObjectA = NULL;
+			collision* collisionObjectB = NULL;
 
-	//		gameObjectA = (GameObject*)bodyA->GetUserData();
-	//		gameObjectB = (GameObject*)bodyB->GetUserData();
+			collisionObjectA = (collision*)bodyA->GetUserData();
+			collisionObjectB = (collision*)bodyB->GetUserData();
 
-	//		if (gameObjectA)
-	//		{
-	//			if (gameObjectA->type() == PLAYER)
-	//			{
-	//				player = (Player*)bodyA->GetUserData();
-	//			}
-	//		}
+			if (collisionObjectB && collisionObjectA)
+			{
+				if (collisionObjectB->type() == PLAYER)
+				{
+					if (collisionObjectA->type() == OBSTACLE)
+					{
 
-	//		if (gameObjectB)
-	//		{
-	//			if (gameObjectB->type() == PLAYER)
-	//			{
-	//				player = (Player*)bodyB->GetUserData();
-	//			}
-	//		}
+						playerA = (Player*)bodyB->GetUserData();
+					}
+				}
 
-	//		if (player)
-	//		{
-	//			player->DecrementHealth();
-	//		}
-	//	}
+				if (collisionObjectA->type() == PLAYER)
+				{
+					if (collisionObjectB->type() == OBSTACLE)
+					{
+						playerA = (Player*)bodyA->GetUserData();
+					}
+				}
 
-	//	// Get next contact point
-	//	contact = contact->GetNext();
-	//}
+			}
+
+			if (playerA)
+			{
+				
+				gef::DebugOut("sdofksnedflkmn");
+				//player->DecrementHealth();
+				//std::cout << "decrease hp" << std::endl;
+
+			}
+		}
+
+		// Get next contact point
+		contact = contact->GetNext();
+	}
 }
 void SceneApp::CleanUp()
 {

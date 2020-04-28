@@ -6,6 +6,7 @@
 #ifndef _PLAYER_H
 #define _PLAYER_H
 
+#include "Collision.h"
 #include <system/application.h>
 #include <maths/vector2.h>
 #include <graphics/mesh_instance.h>
@@ -27,7 +28,7 @@ namespace gef
 	class Animation;
 }
 
-class Player
+class Player : public collision
 {
 public:
 	//initializing the player and B2Body elements
@@ -46,6 +47,7 @@ public:
 	float GetPlayerBodyX();
 	float GetPlayerBodyY();
 	float GetPlayerBodyXVecolity();
+
 private:
 
 	//5 below functions provided in framework

@@ -1,24 +1,23 @@
 ﻿  scene_app.cpp
-F:\C++\CMP208\project\scene_app.cpp(90,48): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+F:\C++\CMP208\project\scene_app.cpp(93,48): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
           with
           [
               _Ty=int
           ]
-F:\C++\CMP208\project\scene_app.cpp(91,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-F:\C++\CMP208\project\scene_app.cpp(336,50): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+F:\C++\CMP208\project\scene_app.cpp(94,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+F:\C++\CMP208\project\scene_app.cpp(339,50): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
           with
           [
               _Ty=int
           ]
-F:\C++\CMP208\project\scene_app.cpp(358,50): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+F:\C++\CMP208\project\scene_app.cpp(361,50): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
           with
           [
               _Ty=int
           ]
-  Zombies.cpp
   Generating code
-  235 of 3762 functions ( 6.2%) were compiled, the rest were copied from previous compilation.
+  3 of 3763 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    39 functions had inline decision re-evaluated but remain unchanged
+    17 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   scene_app.vcxproj -> F:\C++\CMP208\project\build\vs2017\x64\Release\scene_app.exe

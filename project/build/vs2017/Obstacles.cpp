@@ -79,6 +79,8 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		apoc_shape.SetAsBox(1.0, 3.4);
 		apoc_obstacle_fixture_def[i].shape = &apoc_shape;
 		apoc_obstacle_B2B[i]->CreateFixture(&apoc_obstacle_fixture_def[i]);
+		set_type(OBSTACLE);
+		apoc_obstacle_B2B[i]->SetUserData(&apoc_obstacle_fixture_def[i]);
 		apoc_obstacle_distance_counter = apoc_obstacle_distance_counter + obstacle_Random_Distance;
 
 	}
@@ -116,6 +118,8 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		military_shape.SetAsBox(1.0, 3.25);
 		military_obstacle_fixture_def[i].shape = &military_shape;
 		military_obstacle_B2B[i]->CreateFixture(&military_obstacle_fixture_def[i]);
+		set_type(OBSTACLE);
+		military_obstacle_B2B[i]->SetUserData(&military_obstacle_fixture_def[i]);
 
 
 		military_obstacle_distance_counter = military_obstacle_distance_counter + obstacle_Random_Distance;
@@ -151,6 +155,7 @@ void Obstacles::InitObstacles(gef::Platform& platform, b2World* world, int diffi
 		samurai_shape.SetAsBox(1.0, 3.9);
 		samurai_obstacle_fixture_def[i].shape = &military_shape;
 		samurai_obstacle_B2B[i]->CreateFixture(&samurai_obstacle_fixture_def[i]);
+		samurai_obstacle_B2B[i]->SetUserData(&samurai_obstacle_fixture_def[i]);
 		samurai_obstacle_distance_counter = samurai_obstacle_distance_counter + obstacle_Random_Distance;
 
 	}
