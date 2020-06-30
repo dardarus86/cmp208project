@@ -1,3 +1,9 @@
+///////////////////////////////////////////
+// CODE CREATED BY JAMIE HADDOW 0705082  //
+//				COMMENTED                //
+///////////////////////////////////////////
+
+
 #ifndef _COLLISION_H
 #define _COLLISION_H
 
@@ -9,6 +15,7 @@ enum OBJECT_TYPE
 
 };
 
+//simplified gameobjects classdue to not needing meshinstance inheritance
 class collision
 {
 public:

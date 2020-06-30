@@ -43,7 +43,7 @@ void SceneApp::Init()
 	current_start_menu_choice_ = STARTMENUCHOICE::START;
 	current_option_menu_choice_ = OPTIONMENUCHOICE::VOLUME;
 	camera_state_ = CameraOptions::Behind;
-	//player.set_type(PLAYER);
+	player.set_type(PLAYER);
 	//obstacles.set_type(OBSTACLE);
 	textcolors[0] = 0xffffffff;
 	textcolors[1] = 0xff0000dd;
@@ -466,12 +466,6 @@ void SceneApp::GameUpdate(float frame_time)
 		boocounter = 50;
 	}
 
-	if (score  < 4 && boocounter <= 0)
-	{
-		audio_manager_->PlaySample(rand() % 3 + 8);
-		boocounter = 50;
-	}
-
 	if (player.GetGoalFinished())
 	{
 		audio_manager_->LoadMusic("audio/music/end.wav", platform_);
@@ -730,7 +724,7 @@ void SceneApp::UpdateSimulation(float frame_time)
 			b2Body* bodyB = contact->GetFixtureB()->GetBody();
 
 			// DO COLLISION RESPONSE HERE
-			Player* playerA = NULL;
+			Player* player = NULL;
 
 			collision* collisionObjectA = NULL;
 			collision* collisionObjectB = NULL;
@@ -745,7 +739,7 @@ void SceneApp::UpdateSimulation(float frame_time)
 					if (collisionObjectA->type() == OBSTACLE)
 					{
 
-						playerA = (Player*)bodyB->GetUserData();
+						player = (Player*)bodyB->GetUserData();
 					}
 				}
 
@@ -753,16 +747,21 @@ void SceneApp::UpdateSimulation(float frame_time)
 				{
 					if (collisionObjectB->type() == OBSTACLE)
 					{
-						playerA = (Player*)bodyA->GetUserData();
+						//gef::DebugOut("sdofksnedflkmn");
+						player = (Player*)bodyA->GetUserData();
 					}
 				}
 
 			}
 
-			if (playerA)
+			if (player)
 			{
-				
-				gef::DebugOut("sdofksnedflkmn");
+				if (boocounter <= 0)
+				{
+					audio_manager_->PlaySample(rand() % 3 + 8);
+					boocounter = 50;
+				}
+				//gef::DebugOut("sdofksnedflkmn");
 				//player->DecrementHealth();
 				//std::cout << "decrease hp" << std::endl;
 
